@@ -1,0 +1,10 @@
+<div style="width: 100%; display: flex; justify-content: center">
+  <figure fd-illustrated-message [svgConfig]="sceneConfig">
+    <figcaption fd-illustrated-message-figcaption>
+      <h3 fd-illustrated-message-title>{{ title }}</h3>
+    </figcaption>
+    <fd-illustrated-message-actions>
+      <ng-content />
+    </fd-illustrated-message-actions>
+  </figure>
+</div>

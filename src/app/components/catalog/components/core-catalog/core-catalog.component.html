@@ -1,0 +1,88 @@
+<div>
+  <fd-layout-panel class="header-panel">
+    <fd-layout-panel-header>
+      <fd-layout-panel-head>
+        <h1 class="header" fd-layout-panel-title>{{ title() }}</h1>
+        @if (subtitle) {
+          <fd-layout-panel-description>{{
+            subtitle
+          }}</fd-layout-panel-description>
+        }
+      </fd-layout-panel-head>
+    </fd-layout-panel-header>
+    <fd-layout-panel-body class="catalog-page-header-body">
+      <div class="catalog-page-header-filter-wrapper">
+        @if (filterHeader) {
+          <div class="catalog-page-header-filter">
+            <label fd-form-label>Category</label>
+            <fdp-select
+              placeholder="All"
+              width="250px"
+              [list]="categories"
+              (selectionChange)="setCategoryFilter($event)"
+            />
+          </div>
+          <fdp-form-group
+            class="catalog-page-header-filter"
+            columnLayout="XL1-L1-M1-S1"
+            [fieldColumnLayout]="{ XL: 12, L: 12, M: 12, S: 12 }"
+            [noLabelLayout]="true"
+          >
+            <fdp-form-field id="provider" [column]="1" [noLabelLayout]="true">
+              <label fd-form-label>Provider</label>
+              <fdp-multi-combobox
+                contentDensity="compact"
+                displayKey="label"
+                lookupKey="id"
+                name="Provider"
+                placeholder="All"
+                [autoResize]="true"
+                [dataSource]="providers"
+                [selectedItems]="filter.providers"
+                (selectionChange)="setProvidersFilter($event)"
+              />
+            </fdp-form-field>
+          </fdp-form-group>
+        }
+      </div>
+
+      <div class="search">
+        @if (!disableSearch) {
+          <fdp-search-field
+            contentDensity="compact"
+            data-testid="ngx-utilities-search-input"
+            fd-initial-focus="true"
+            [disableRefresh]="true"
+            [inputText]="initialFilter"
+            [placeholder]="searchPlaceholder"
+            i18n-placeholder="
+              search field placeholder|Search field on the Catalog
+            "
+            [suggestions]="suggestions"
+            (cancelSearch)="onInputChange()"
+            (inputChange)="onInputChange($event.text)"
+            (searchSubmit)="onInputChange($event.text)"
+          />
+        }
+      </div>
+    </fd-layout-panel-body>
+    <fd-layout-panel-footer />
+  </fd-layout-panel>
+</div>
+@if (filteredData && filteredData.length > 0) {
+  <div class="catalog-page">
+    @for (item of filteredData; track item.title) {
+      <div class="layout-grid-item">
+        <!-- todo/later: if no template was provided use app-catalog-item, else template-->
+        <app-catalog-item
+          [data]="item"
+          (click)="itemClickedHandler(item)"
+          (keyup.enter)="itemClickedHandler(item)"
+          (keyup.space)="itemClickedHandler(item)"
+        />
+      </div>
+    }
+  </div>
+} @else {
+  <app-empty-catalog [title]="noItemsFoundTitle" />
+}

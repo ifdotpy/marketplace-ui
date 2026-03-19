@@ -1,0 +1,80 @@
+$fd-card-width: 300px;
+$fd-card-padding: 1rem;
+
+fd-card {
+  padding: $fd-card-padding;
+  cursor: pointer;
+}
+
+:host ::ng-deep .fd-form-label,
+:host ::ng-deep .fd-text {
+  font-size: var(--sapFontSmallSize) !important;
+}
+
+:host ::ng-deep .fd-card__header-main {
+  padding: 0;
+}
+
+:host ::ng-deep .fd-card__header-main-container {
+  display: block;
+}
+
+fd-card-header {
+  border-bottom-width: 0;
+  border-radius: 0;
+  display: block;
+  padding: 0;
+  padding-bottom: 10px;
+}
+
+fd-avatar {
+  background-color: transparent;
+}
+
+fd-card-content {
+  color: var(--sapContent_LabelColor);
+  font-size: var(--sapFontSmallSize);
+}
+
+.fd-card__title--clamp {
+  height: 54px;
+  line-height: 18px;
+  margin-top: 10px;
+}
+
+.fd-card__description--clamp {
+  -webkit-line-clamp: 5;
+  line-height: 15px;
+  height: 75px;
+  text-overflow: ellipsis;
+}
+
+.clamp {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+:host ::ng-deep .fd-info-label__text {
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.fd-card__label {
+  margin-left: 7px;
+}
+.fd-card__labels {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.fd-card__content-section {
+  min-width: 0;
+  margin-bottom: 0;
+}
+
+.fd-card__content-container {
+  margin-bottom: 14px;
+  margin-top: 10px;
+}

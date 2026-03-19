@@ -1,0 +1,46 @@
+<fdp-dynamic-page>
+  <fdp-dynamic-page-title />
+  <fdp-dynamic-page-content>
+    @let providers = installableProviders | async;
+    @if (providers) {
+      <div>
+        @if (providers.length > 0) {
+          <app-core-catalog
+            noItemsFoundTitle="No Service found"
+            searchPlaceholder="Search for a service by name, category, provider, and more"
+            subtitle="From here, browse through official partner, and community Services. Select a Service to open its page for more details, enabling instructions, documentation, and support information."
+            [data]="providers"
+            [filterHeader]="true"
+            [initialFilter]="initialFilter ?? ''"
+            (inputChanged)="writeQueryParam($event)"
+            (itemClicked)="navigate($event)"
+          />
+        } @else {
+          <app-provider-empty [title]="'There are no available Services.'" />
+        }
+
+        <div class="extension-catalog-call-to-action-banner">
+          <svg class="fd-illustrated-message__illustration">
+            <use
+              href="assets/images/extension-catalog-call-to-action-banner.svg#sapIllus-Scene-call-to-action-banner"
+            />
+          </svg>
+          <div class="banner-text">
+            <p class="banner-title">
+              List your offering in the Platform Mesh Catalog.
+            </p>
+            <p class="banner-body">
+              Become a trusted Platform Mesh Service Provider. Learn how to
+              build and integrate your offering into the Platform Mesh.
+            </p>
+            <p class="banner-link">
+              <a fd-link href="https://platform-mesh.io" target="_blank"
+                >More info</a
+              >
+            </p>
+          </div>
+        </div>
+      </div>
+    }
+  </fdp-dynamic-page-content>
+</fdp-dynamic-page>

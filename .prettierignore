@@ -1,0 +1,10 @@
+*.generated.ts
+chart/templates/extension-global.yaml
+chart/templates/extensions.yaml
+chart/templates/gcp-monitoring.yaml
+# these are files generated in the pipeline
+/.pipeline
+package.json
+stage-config.json
+staging_output_deprecated.json
+url-log.json

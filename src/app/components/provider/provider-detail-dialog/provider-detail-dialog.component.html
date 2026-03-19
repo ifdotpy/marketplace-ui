@@ -1,0 +1,280 @@
+@let marketplaceEntry = marketplaceEntryObservable | async;
+@if (marketplaceEntry) {
+  <fdp-dynamic-page
+    ariaLabel="View Extension"
+    size="large"
+    [autoResponsive]="false"
+  >
+    <fdp-dynamic-page-title
+      [subtitle]="marketplaceEntry.spec.providerMetadata.spec.category || ''"
+      [title]="marketplaceEntry.spec.providerMetadata.spec.displayName"
+    >
+      @if (showInstalledLabel()) {
+        <fdp-dynamic-page-key-info>
+          <fd-info-label color="8" label="Enabled" title="Enabled" />
+        </fdp-dynamic-page-key-info>
+      }
+      <fdp-dynamic-page-global-actions>
+        <fd-toolbar fdType="transparent" [clearBorder]="true">
+          @if (marketplaceEntry.spec.providerMetadata.spec.mainLink) {
+            <span>
+              <button
+                fd-button
+                fdCompact
+                glyph="action"
+                label="Open"
+                [fdType]="userIsProviderAdmin ? '' : 'emphasized'"
+                (click)="
+                  goToExternalLink(
+                    marketplaceEntry.spec.providerMetadata.spec.mainLink.url
+                  )
+                "
+              ></button>
+            </span>
+          }
+          <ng-container>
+            @if (showInstallButton()) {
+              <button
+                data-analytics-id="extension-details-dialog-install-button"
+                data-testid="extension-details-dialog-install-button"
+                fd-button
+                fdCompact
+                fdType="emphasized"
+                label="Enable"
+                i18n-label
+                [disabled]="isChanging | async"
+                (click)="installExtension()"
+              ></button>
+            }
+
+            @if (showUninstallButton()) {
+              <button
+                data-analytics-id="extension-details-dialog-uninstall-button"
+                data-testid="extension-details-dialog-uninstall-button"
+                fd-button
+                fdCompact
+                id="uninstall-btn"
+                label="Disable"
+                i18n-label
+                [disabled]="isChanging | async"
+                (click)="uninstallExtension()"
+              ></button>
+            }
+          </ng-container>
+        </fd-toolbar>
+      </fdp-dynamic-page-global-actions>
+    </fdp-dynamic-page-title>
+
+    <fdp-dynamic-page-header
+      [collapsed]="false"
+      [collapsible]="false"
+      [pinnable]="false"
+    >
+      <fd-facet-group ariaLabel="View Extension Header">
+        <fd-facet id="avatar" type="image">
+          <fd-avatar
+            ariaLabel="Extension avatar"
+            size="s"
+            [contain]="true"
+            [image]="getIcon(marketplaceEntry.spec.providerMetadata)"
+            [transparent]="true"
+          />
+        </fd-facet>
+        <fd-facet>
+          <app-provider-verification
+            [verification]="
+              marketplaceEntry?.spec?.providerMetadata?.spec?.verification
+            "
+          />
+        </fd-facet>
+
+        <fd-facet class="label-container" type="custom">
+          @for (
+            label of marketplaceEntry.spec.providerMetadata.spec.labels;
+            track label.title
+          ) {
+            <fd-info-label
+              class="info-label"
+              type="icon"
+              [color]="label.color"
+              [label]="label.title"
+              [title]="label.title"
+            />
+          }
+        </fd-facet>
+      </fd-facet-group>
+    </fdp-dynamic-page-header>
+
+    <fdp-dynamic-page-content>
+      <div class="page-section">
+        <div class="page-section__title">
+          <h4
+            fd-title
+            i18n="
+              Extension description title|An introduction header for the
+              description of an extension
+            "
+          >
+            What is
+            {{ marketplaceEntry.spec.providerMetadata.spec.displayName }}?
+          </h4>
+        </div>
+        {{ marketplaceEntry.spec.providerMetadata.spec.description }}
+      </div>
+
+      @if (marketplaceEntry.spec.providerMetadata.spec.documentation?.length) {
+        <div class="page-section">
+          <div class="page-section__title">
+            <h4
+              fd-title
+              i18n="
+                Extension documentation title|An introduction header for the
+                documentation of an extension
+              "
+            >
+              Want to know more?
+            </h4>
+          </div>
+          @for (
+            doc of marketplaceEntry.spec.providerMetadata.spec.documentation;
+            track doc.name
+          ) {
+            <p>
+              <a fd-link target="_blank" [href]="doc.url">
+                {{ doc.name || 'Documentation' }}
+              </a>
+            </p>
+          }
+        </div>
+      }
+
+      @let _productOwners = productOwners | async;
+      @if (
+        marketplaceEntry.spec.providerMetadata.spec.preferredSupportChannels ||
+        _productOwners?.length
+      ) {
+        <div class="page-section">
+          <div class="page-section__title">
+            <h4
+              fd-title
+              i18n="
+                Extension support channels title|An introduction header for the
+                support channel links of an extension
+              "
+            >
+              How to get help?
+            </h4>
+          </div>
+
+          @let _supportChannels = supportChannels | async;
+          @let _communityChannels = communityChannels | async;
+          @if (
+            _communityChannels?.length ||
+            _productOwners?.length ||
+            _supportChannels?.length ||
+            marketplaceEntry.spec.providerMetadata.spec.serviceLevel
+          ) {
+            <fd-facet type="form">
+              @if (_communityChannels?.length || _supportChannels?.length) {
+                <fd-facet-content style="flex-wrap: wrap">
+                  @if (_communityChannels?.length) {
+                    <label
+                      data-testid="extension-community-links"
+                      fd-form-label
+                      [colon]="true"
+                      >Ask the community</label
+                    >
+                  }
+                  @for (link of _communityChannels; track link.displayName) {
+                    <span class="community-links">
+                      @if (link.url) {
+                        <a fd-link target="_blank" [href]="link.url"
+                          >{{ link.displayName }}
+                        </a>
+                      } @else {
+                        {{ link.displayName }}
+                      }
+                    </span>
+                  }
+                  <div style="width: 100%"></div>
+                  @if (_supportChannels?.length) {
+                    <label
+                      data-testid="extension-issue-links"
+                      fd-form-label
+                      [colon]="true"
+                      >Report an issue</label
+                    >
+                  }
+                  @for (link of _supportChannels; track link.displayName) {
+                    <span class="support-links">
+                      @if (link.url) {
+                        <a fd-link target="_blank" [href]="link.url"
+                          >{{ link.displayName }}
+                        </a>
+                      } @else {
+                        {{ link.displayName }}
+                      }
+                    </span>
+                  }
+                </fd-facet-content>
+              }
+              @if (_productOwners?.length) {
+                <fd-facet-content class="fd-margin-top--sm">
+                  <label
+                    data-testid="extension-product-owners"
+                    fd-form-label
+                    [colon]="true"
+                    >Product Owners</label
+                  >
+                  @for (contact of _productOwners; track contact.displayName) {
+                    <span class="contacts-links">
+                      @if (contact.contactLink) {
+                        <a fd-link target="_blank" [href]="contact.contactLink"
+                          >{{ contact.displayName }}
+                        </a>
+                      } @else {
+                        @if (contact.email) {
+                          <a
+                            fd-link
+                            target="_blank"
+                            [href]="'mailto:' + contact.email"
+                            >{{ contact.displayName }}
+                          </a>
+                        } @else {
+                          <span>{{ contact.displayName }}</span>
+                        }
+                      }
+
+                      @if (!$last) {
+                        <span>, </span>
+                      }
+                    </span>
+                  }
+                </fd-facet-content>
+              }
+              @if (marketplaceEntry.spec.providerMetadata.spec.serviceLevel) {
+                <fd-facet-content>
+                  <label
+                    data-testid="extension-details-serviceLevel"
+                    fd-form-label
+                    [colon]="true"
+                    >Service Level</label
+                  >
+                  <fd-text
+                    data-testid="extension-details-serviceLevel"
+                    id="service-level"
+                    [text]="
+                      mapServiceLevel(
+                        marketplaceEntry.spec.providerMetadata.spec.serviceLevel
+                      )
+                    "
+                  />
+                </fd-facet-content>
+              }
+            </fd-facet>
+          }
+        </div>
+      }
+    </fdp-dynamic-page-content>
+  </fdp-dynamic-page>
+}

@@ -1,0 +1,53 @@
+.catalog-page {
+  background-color: var(--sapBackgroundColor);
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-auto-rows: auto;
+  grid-gap: 1rem;
+}
+
+.catalog-page-header-body {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+.catalog-page-header-filter-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.header-panel {
+  margin-bottom: 1rem;
+  box-shadow: var(--fdCard_Box_Shadow_Regular);
+}
+
+.layout-grid-item {
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.search {
+  margin-top: 2rem;
+  flex: 0.7;
+}
+
+.cdk-overlay-container {
+  margin-top: 42px;
+}
+
+.fd-layout-panel__header,
+.fd-layout-panel__body {
+  border-bottom: 0;
+}
+
+.fd-layout-panel h1.fd-layout-panel__title {
+  font-size: 2em;
+  font-weight: bold;
+}
+
+fd-layout-panel-footer {
+  display: none;
+}

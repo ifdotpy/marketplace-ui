@@ -1,0 +1,39 @@
+.page-section {
+  padding: 1rem 0 0;
+  white-space: pre-line;
+}
+
+.page-section__title {
+  height: 2.75rem;
+  width: 100%;
+  border-bottom: 0.0625rem transparent;
+  margin: 0 -2rem 1rem -2rem;
+  padding: 0 2rem;
+
+  h4 {
+    line-height: 2.75rem;
+    border-bottom: 0.0625rem transparent;
+    width: fit-content;
+  }
+}
+
+.message-container {
+  padding: 1rem 2rem 0 2rem;
+}
+
+.info-label {
+  margin-left: 0.5rem;
+}
+
+.fd-badge {
+  position: inherit;
+  max-width: fit-content;
+}
+
+:host ::ng-deep .fd-title--h5 {
+  font-size: var(--sapFontSize) !important;
+}
+
+:host ::ng-deep fd-facet h1.fd-margin-bottom--sm {
+  margin-bottom: 0 !important;
+}

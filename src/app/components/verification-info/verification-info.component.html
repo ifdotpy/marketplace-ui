@@ -1,0 +1,22 @@
+@let verificationInfoData = verificationInfo();
+@if (verificationInfoData) {
+  <div>
+    @if (verificationInfoData.inlineHelp) {
+      <fd-avatar
+        ariaLabel="Verified icon"
+        class="verified-icon"
+        image="assets/images/verified.svg"
+        size="xs"
+        [contain]="true"
+        [fd-inline-help]="verificationInfoData.inlineHelp || ''"
+        [transparent]="true"
+      />
+    }
+    <span
+      class="verification-label"
+      fd-object-status
+      [label]="verificationInfoData.label"
+      [status]="verificationInfoData.objectStatus"
+    ></span>
+  </div>
+}

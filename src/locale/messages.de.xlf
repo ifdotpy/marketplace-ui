@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="en-US" datatype="plaintext" original="ng2.template">
+    <body>
+      <trans-unit id="cbca78957d96ce58fe6186011b9874eb9810a163" datatype="html">
+        <source>Hello i18n! It&apos;s english language</source>
+        <target>Hallo i18n! Es ist englische Sprache</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/pages/home-page/home-page.component.html</context>
+          <context context-type="linenumber">54</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="85d0fe8bc14b464c21f209874cc7dbb3cfd16bb9" datatype="html">
+        <source>This is another line</source>
+        <target>Dies ist eine andere Zeile</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/pages/home-page/home-page.component.html</context>
+          <context context-type="linenumber">56</context>
+        </context-group>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

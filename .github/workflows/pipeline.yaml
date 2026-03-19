@@ -1,0 +1,22 @@
+name: pipe
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types:
+      - opened
+      - synchronize
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pipe:
+    uses: platform-mesh/.github/.github/workflows/pipeline-node-app.yml@main
+    secrets: inherit
+    with:
+      imageTagName: ghcr.io/platform-mesh/marketplace-ui
+      componentVersionKey: marketplace-ui
+      repoVersionUpdate: 'platform-mesh/helm-charts-priv'

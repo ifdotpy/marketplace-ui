@@ -1,0 +1,22 @@
+$iconWidth: 1rem;
+.verified-icon {
+  max-width: $iconWidth;
+  max-height: $iconWidth;
+  min-height: $iconWidth;
+  min-width: $iconWidth;
+  height: $iconWidth;
+  width: $iconWidth;
+  margin-right: 0.25rem;
+}
+
+.verification-label {
+  font-size: var(--sapFontSmallSize);
+}
+
+// Remove when upgrade to fundamentals > v0.48.0-rc.22 https://github.com/SAP/fundamental-ngx/issues/11146
+.fd-object-status.fd-object-status--informative:focus {
+  --fdObjectStatus_Text_Color: var(--sapInformativeElementColor) !important;
+}
+.fd-object-status.fd-object-status--neutral:focus {
+  --fdObjectStatus_Text_Color: var(--sapNeutralElementColor) !important;
+}

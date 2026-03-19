@@ -1,0 +1,58 @@
+<fd-card
+  data-analytics-id="catalog-item"
+  [attr.data-testid]="data.testId"
+  [badge]="data.badge?.text || ''"
+  [tabindex]="0"
+>
+  <fd-card-header>
+    <fd-card-main-header>
+      @if (data.labels) {
+        <div class="fd-card__labels">
+          @for (label of data.labels; track label.title) {
+            <span>
+              <fd-info-label
+                class="fd-card__label"
+                type="icon"
+                [color]="label.color"
+                [glyph]="label.glyph || ''"
+                [label]="label.title"
+                [title]="label.title"
+              />
+            </span>
+          }
+        </div>
+      }
+      <fd-avatar
+        size="s"
+        [glyph]="data.glyph || ''"
+        [id]="generateId()"
+        [image]="data.image || ''"
+        [transparent]="true"
+      />
+      <h2
+        class="clamp fd-card__title--clamp"
+        fd-card-title
+        [title]="data.title"
+      >
+        {{ data.title }}
+        @if (showProviderVerification()) {
+          <app-provider-verification [verification]="data.verification" />
+        }
+      </h2>
+    </fd-card-main-header>
+  </fd-card-header>
+  <fd-card-content>
+    <div class="clamp fd-card__description--clamp" [title]="data.description">
+      {{ data.description }}
+    </div>
+
+    <div class="fd-card__content-container">
+      @for (item of data.additionalInfo; track item.value) {
+        <div class="fd-card__content-group">
+          <label fd-form-label [colon]="true">{{ item.label }}</label>
+          <fd-text [maxLines]="2" [text]="item.value" />
+        </div>
+      }
+    </div>
+  </fd-card-content>
+</fd-card>
