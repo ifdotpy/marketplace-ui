@@ -1,9 +1,11 @@
-import { CatalogDataItem } from '../../models';
 import { CatalogItemComponent } from './catalog-item.component';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { CatalogDataItem } from 'models/index';
 import { mock } from 'vitest-mock-extended';
 
-const buildItem = (overrides: Partial<CatalogDataItem> = {}): CatalogDataItem => ({
+const buildItem = (
+  overrides: Partial<CatalogDataItem> = {},
+): CatalogDataItem => ({
   title: 'Test Provider',
   description: 'A test provider description',
   badge: { text: 'INSTALLED', color: 'var(--sapPositiveColor)' },
@@ -35,20 +37,29 @@ describe('CatalogItemComponent', () => {
 
   describe('showProviderVerification', () => {
     it('should return true when verification is defined', () => {
-      fixture.componentRef.setInput('data', buildItem({ verification: { type: 'community' } }));
+      fixture.componentRef.setInput(
+        'data',
+        buildItem({ verification: { type: 'community' } }),
+      );
       fixture.detectChanges();
       expect(component.showProviderVerification()).toBe(true);
     });
 
     it('should return true when verification is null', () => {
-      fixture.componentRef.setInput('data', buildItem({ verification: null as any }));
+      fixture.componentRef.setInput(
+        'data',
+        buildItem({ verification: null as any }),
+      );
       fixture.detectChanges();
       // null !== undefined, so verification is "defined"
       expect(component.showProviderVerification()).toBe(true);
     });
 
     it('should return false when verification is undefined', () => {
-      fixture.componentRef.setInput('data', buildItem({ verification: undefined }));
+      fixture.componentRef.setInput(
+        'data',
+        buildItem({ verification: undefined }),
+      );
       fixture.detectChanges();
       expect(component.showProviderVerification()).toBe(false);
     });
@@ -56,7 +67,10 @@ describe('CatalogItemComponent', () => {
 
   describe('generateId', () => {
     it('should return MD5 hash of image when image is set', () => {
-      fixture.componentRef.setInput('data', buildItem({ image: 'https://example.com/icon.png', glyph: undefined }));
+      fixture.componentRef.setInput(
+        'data',
+        buildItem({ image: 'https://example.com/icon.png', glyph: undefined }),
+      );
       fixture.detectChanges();
       const id = component.generateId();
       expect(id).toBeTruthy();
@@ -64,13 +78,19 @@ describe('CatalogItemComponent', () => {
     });
 
     it('should return glyph when no image is set but glyph is set', () => {
-      fixture.componentRef.setInput('data', buildItem({ image: undefined, glyph: 'sap-icon://accept' }));
+      fixture.componentRef.setInput(
+        'data',
+        buildItem({ image: undefined, glyph: 'sap-icon://accept' }),
+      );
       fixture.detectChanges();
       expect(component.generateId()).toBe('sap-icon://accept');
     });
 
     it('should return "no-icon" when neither image nor glyph is set', () => {
-      fixture.componentRef.setInput('data', buildItem({ image: undefined, glyph: undefined }));
+      fixture.componentRef.setInput(
+        'data',
+        buildItem({ image: undefined, glyph: undefined }),
+      );
       fixture.detectChanges();
       expect(component.generateId()).toBe('no-icon');
     });
@@ -79,7 +99,9 @@ describe('CatalogItemComponent', () => {
   describe('ensureBadge', () => {
     it('should set badge backgroundColor and tabIndex when badge and DOM element exist', () => {
       const badgeColor = '#ff0000';
-      const data = buildItem({ badge: { text: 'INSTALLED', color: badgeColor } });
+      const data = buildItem({
+        badge: { text: 'INSTALLED', color: badgeColor },
+      });
       fixture.componentRef.setInput('data', data);
       fixture.detectChanges();
 
@@ -92,7 +114,9 @@ describe('CatalogItemComponent', () => {
 
       component['ensureBadge']();
 
-      expect(component['elementRef'].nativeElement.querySelector).toHaveBeenCalledWith('.fd-badge');
+      expect(
+        component['elementRef'].nativeElement.querySelector,
+      ).toHaveBeenCalledWith('.fd-badge');
       expect(badge.style.backgroundColor).toEqual(badgeColor);
       expect(badge.tabIndex).toEqual(-1);
     });

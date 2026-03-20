@@ -86,6 +86,7 @@ export type ColorCategory =
 export interface Label {
   title: string;
   color: ColorCategory;
+  glyph?: string;
 }
 
 export interface MarketplaceEntry {

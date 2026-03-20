@@ -31,7 +31,7 @@ import {
   DynamicPageTitleComponent,
 } from '@fundamental-ngx/platform/dynamic-page';
 import { Store } from '@ngrx/store';
-import { VerificationInfoComponent } from 'components/verification-info/verification-info.component';
+import { VerificationInfoComponent } from 'components/provider/verification-info/verification-info.component';
 import { PROVIDER_INSTANCE_INSTALLED } from 'models/luigi-go-back';
 import {
   Contact,
@@ -39,8 +39,8 @@ import {
   ProviderMetadata,
   ServiceLevel,
 } from 'models/provider-metadata';
-import { Observable, Subscription, combineLatest, mergeMap, tap } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { Observable, Subscription, combineLatest } from 'rxjs';
+import { filter, mergeMap, tap } from 'rxjs/operators';
 import { LuigiClient, PmLuigiContextService } from 'services/luigi';
 import { ProviderService } from 'services/provider.service';
 import { isProviderInstanceChanging } from 'state/changing-provider-instance.selectors';
@@ -166,12 +166,6 @@ export class ProviderDetailDialogComponent implements OnInit, OnDestroy {
       entityType: this.context?.entityType,
       entityId: this.context?.entityId,
     };
-  }
-
-  protected visitExtension(): void {
-    if (this.marketplaceEntry) {
-      this.providerService.navigateToProviderDetails(this.marketplaceEntry);
-    }
   }
 
   protected async uninstallExtension(): Promise<void> {

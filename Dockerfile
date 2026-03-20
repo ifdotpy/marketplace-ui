@@ -3,7 +3,7 @@ FROM node:22.17 AS build
 COPY ./ /app
 
 WORKDIR /app
-RUN --mount=type=secret,id=common_repository_token COMMON_REPOSITORY_TOKEN=$(cat /run/secrets/common_repository_token) npm ci
+RUN npm ci
 
 RUN npm run build
 

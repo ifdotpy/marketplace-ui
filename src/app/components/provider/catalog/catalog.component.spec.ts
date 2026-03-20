@@ -1,17 +1,17 @@
-import { CatalogDataItem } from '../../models';
-import { CoreCatalogComponent } from './core-catalog.component';
+import { CatalogComponent } from './catalog.component';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ActivatedRoute, convertToParamMap, ParamMap } from '@angular/router';
+import { ActivatedRoute, ParamMap, convertToParamMap } from '@angular/router';
+import { CatalogDataItem } from 'models/index';
 import { of } from 'rxjs';
 import { mock } from 'vitest-mock-extended';
 
 describe('CoreCatalogComponent', () => {
-  let component: CoreCatalogComponent;
-  let fixture: ComponentFixture<CoreCatalogComponent>;
+  let component: CatalogComponent;
+  let fixture: ComponentFixture<CatalogComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CoreCatalogComponent],
+      imports: [CatalogComponent],
       providers: [
         {
           provide: ActivatedRoute,
@@ -22,7 +22,7 @@ describe('CoreCatalogComponent', () => {
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(CoreCatalogComponent);
+    fixture = TestBed.createComponent(CatalogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

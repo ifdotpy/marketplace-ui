@@ -2,8 +2,8 @@ import { Injectable, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { MarketplaceEntry, NodeContext } from 'models/index';
 import { ProviderMetadataFilter } from 'models/provider-metadata';
-import { Observable, switchMap, tap } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { filter, map, switchMap, tap } from 'rxjs/operators';
 import { ApolloFactory } from 'services/apollo-factory';
 import { LuigiClient } from 'services/luigi';
 import { luigiContextSelector } from 'services/luigi/state';
@@ -38,7 +38,6 @@ export class GraphqlService {
               const res = entries.filter((entry) => {
                 return entry.metadata.name === providerName;
               });
-              console.log(res);
               return res;
             }),
             map((entries: MarketplaceEntry[]) => entries[0] || null),

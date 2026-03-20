@@ -1,4 +1,4 @@
-import { CardFilter } from '../components/core-catalog/core-catalog.component';
+import { CardFilter } from '../models';
 import { CategoriesUtils } from './categories.utils';
 
 describe('CategoriesUtils', () => {
@@ -33,7 +33,11 @@ describe('CategoriesUtils', () => {
 
   describe('uniq', () => {
     it('should return unique sorted non-empty strings', () => {
-      expect(CategoriesUtils.uniq(['B', 'A', 'B', 'C', '', 'A'])).toEqual(['A', 'B', 'C']);
+      expect(CategoriesUtils.uniq(['B', 'A', 'B', 'C', '', 'A'])).toEqual([
+        'A',
+        'B',
+        'C',
+      ]);
     });
 
     it('should return empty array when all values are empty', () => {
@@ -58,9 +62,15 @@ describe('CategoriesUtils', () => {
         item: { category: 'A' },
         expected: false,
       },
-    ])('should return $expected when category filter is $filter.category', ({ filter, item, expected }) => {
-      const result = CategoriesUtils.filterByCategory(filter as CardFilter, item);
-      expect(result).toEqual(expected);
-    });
+    ])(
+      'should return $expected when category filter is $filter.category',
+      ({ filter, item, expected }) => {
+        const result = CategoriesUtils.filterByCategory(
+          filter as CardFilter,
+          item,
+        );
+        expect(result).toEqual(expected);
+      },
+    );
   });
 });

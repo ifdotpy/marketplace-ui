@@ -16,7 +16,7 @@ import { requestFailed } from 'state/common.action';
 export class ProviderMetadataEffects {
   loadProviderMetadata = createEffect(() =>
     this.actions.pipe(ofType(loadProviderMetadata)).pipe(
-      switchMap(({ providerName}) => {
+      switchMap(({ providerName }) => {
         if (!providerName) {
           return of(
             requestFailed({
@@ -31,24 +31,21 @@ export class ProviderMetadataEffects {
             }),
           );
         }
-        return this.graphqlService
-          .getMarketplaceEntry(providerName)
-          .pipe(
-            map((marketplaceEntry: MarketplaceEntry) => {
-              const labels = this.providerService.buildLabels(
-                marketplaceEntry.spec.providerMetadata,
-              );
-              console.log(marketplaceEntry.spec.providerMetadata.spec);
-              marketplaceEntry.spec.providerMetadata.spec = {
-                ...marketplaceEntry.spec.providerMetadata.spec,
-                labels,
-              };
-              return marketplaceEntry;
-            }),
-            map((marketplaceEntry) =>
-              retrievedProviderMetadata({ marketplaceEntry }),
-            ),
-          );
+        return this.graphqlService.getMarketplaceEntry(providerName).pipe(
+          map((marketplaceEntry: MarketplaceEntry) => {
+            const labels = this.providerService.buildLabels(
+              marketplaceEntry.spec.providerMetadata,
+            );
+            marketplaceEntry.spec.providerMetadata.spec = {
+              ...marketplaceEntry.spec.providerMetadata.spec,
+              labels,
+            };
+            return marketplaceEntry;
+          }),
+          map((marketplaceEntry) =>
+            retrievedProviderMetadata({ marketplaceEntry }),
+          ),
+        );
       }),
       catchError((error: HttpErrorResponse) => {
         return of(
@@ -58,8 +55,7 @@ export class ProviderMetadataEffects {
             dialogTitle: 'Failed to retrieve provider metadata',
           }),
         );
-      }
-      ),
+      }),
     ),
   );
 

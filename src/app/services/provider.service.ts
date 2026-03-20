@@ -34,10 +34,6 @@ export class ProviderService {
     private graphqlService: GraphqlService,
   ) {
     this.handleInstallProvider();
-
-    this.pmLuigiContextService.contextObservable().subscribe((ctx) => {
-      console.log(ctx);
-    });
   }
 
   installProviderInstance(marketplaceEntry: MarketplaceEntry | undefined) {

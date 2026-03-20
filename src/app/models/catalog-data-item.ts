@@ -1,7 +1,7 @@
 import { AdditionalInfo } from './additional-info';
 import { Badge } from './badge';
-import { Label } from './label';
-import { Verification } from 'models/verification';
+import { Label } from './provider-metadata';
+import { Verification } from './verification';
 
 
 export interface CatalogDataItem {

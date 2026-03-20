@@ -1,6 +1,5 @@
+import { CardFilter, CatalogDataItem } from '../models';
 import { ProvidersUtils } from './providers.utils';
-import { CardFilter } from '../components/core-catalog/core-catalog.component';
-import { CatalogDataItem } from '../models';
 
 describe('ProvidersUtils', () => {
   describe('getProviders', () => {
@@ -12,11 +11,21 @@ describe('ProvidersUtils', () => {
 
   describe('isCommunityVerification', () => {
     it('should return true when providerId is the community fallback id', () => {
-      expect(ProvidersUtils.isCommunityVerification('community', {} as CatalogDataItem)).toBe(true);
+      expect(
+        ProvidersUtils.isCommunityVerification(
+          'community',
+          {} as CatalogDataItem,
+        ),
+      ).toBe(true);
     });
 
     it('should return false when providerId is not the community fallback id', () => {
-      expect(ProvidersUtils.isCommunityVerification('hyperspace', {} as CatalogDataItem)).toBe(false);
+      expect(
+        ProvidersUtils.isCommunityVerification(
+          'hyperspace',
+          {} as CatalogDataItem,
+        ),
+      ).toBe(false);
     });
   });
 
@@ -29,7 +38,8 @@ describe('ProvidersUtils', () => {
         expected: true,
       },
       {
-        description: 'no providers filter with a verification type — should include',
+        description:
+          'no providers filter with a verification type — should include',
         filter: { providers: [] },
         item: { verification: { type: 'hyperspace' } },
         expected: true,
@@ -47,7 +57,8 @@ describe('ProvidersUtils', () => {
         expected: false,
       },
       {
-        description: 'multiple providers filter with one matching — should include',
+        description:
+          'multiple providers filter with one matching — should include',
         filter: {
           providers: [
             { label: 'Hyperspace', id: 'hyperspace' },
@@ -58,7 +69,10 @@ describe('ProvidersUtils', () => {
         expected: true,
       },
     ])('$description', ({ filter, item, expected }) => {
-      const result = ProvidersUtils.filterByProviders(filter as CardFilter, item as CatalogDataItem);
+      const result = ProvidersUtils.filterByProviders(
+        filter as CardFilter,
+        item as CatalogDataItem,
+      );
       expect(result).toBe(expected);
     });
   });

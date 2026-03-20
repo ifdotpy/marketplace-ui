@@ -17,8 +17,8 @@ import { AvatarComponent } from '@fundamental-ngx/core/avatar';
 import { FormLabelComponent } from '@fundamental-ngx/core/form';
 import { InfoLabelComponent } from '@fundamental-ngx/core/info-label';
 import { TextComponent } from '@fundamental-ngx/core/text';
-import { CatalogDataItem } from 'components/catalog';
-import { VerificationInfoComponent } from 'components/verification-info/verification-info.component';
+import { CatalogDataItem } from 'models/index';
+import { VerificationInfoComponent } from 'components/provider/verification-info/verification-info.component';
 import { Md5 } from 'ts-md5';
 
 @Component({

@@ -1,8 +1,4 @@
-import {
-  AdditionalInfo,
-  CatalogDataItem,
-  CoreCatalogComponent,
-} from '../catalog';
+import { AdditionalInfo, CatalogDataItem } from 'models/index';
 import { ProviderEmptyComponent } from './provider-empty/provider-empty.component';
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
@@ -15,6 +11,7 @@ import {
 import { DynamicPageComponent as DynamicPageComponent_1 } from '@fundamental-ngx/platform/dynamic-page';
 import { ModalSettings } from '@luigi-project/client';
 import { Store } from '@ngrx/store';
+import { CatalogComponent } from 'components/provider/catalog';
 import { MarketplaceEntry, ProviderMetadata } from 'models/provider-metadata';
 import {
   BehaviorSubject,
@@ -43,7 +40,7 @@ export interface ProviderCatalogDataItem extends CatalogDataItem {
     DynamicPageComponent_1,
     DynamicPageTitleComponent,
     DynamicPageContentComponent,
-    CoreCatalogComponent,
+    CatalogComponent,
     ProviderEmptyComponent,
     AsyncPipe,
     DynamicPageComponent,

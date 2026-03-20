@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "extension-ui": {
+    "marketplace-ui": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -118,7 +118,7 @@
             },
             "de": {
               "outputPath": {
-                "base": "dist/extension-ui/locale"
+                "base": "dist/marketplace-ui/locale"
               },
               "i18nMissingTranslation": "error",
               "localize": ["de"]
@@ -129,20 +129,20 @@
         "serve": {
           "builder": "@angular/build:dev-server",
           "options": {
-            "buildTarget": "extension-ui:build"
+            "buildTarget": "marketplace-ui:build"
           },
           "configurations": {
             "production": {
-              "buildTarget": "extension-ui:build:production"
+              "buildTarget": "marketplace-ui:build:production"
             },
             "serve": {
-              "buildTarget": "extension-ui:build:serve"
+              "buildTarget": "marketplace-ui:build:serve"
             },
             "serve-local": {
-              "buildTarget": "extension-ui:build:serve-local"
+              "buildTarget": "marketplace-ui:build:serve-local"
             },
             "de": {
-              "buildTarget": "extension-ui:build:de"
+              "buildTarget": "marketplace-ui:build:de"
             }
           },
           "defaultConfiguration": "serve"
@@ -150,7 +150,7 @@
         "extract-i18n": {
           "builder": "@angular/build:extract-i18n",
           "options": {
-            "buildTarget": "extension-ui:build"
+            "buildTarget": "marketplace-ui:build"
           }
         },
         "lint": {
@@ -163,7 +163,7 @@
           "builder": "@angular/build:unit-test",
           "options": {
             "tsConfig": "tsconfig.spec.json",
-            "buildTarget": "extension-ui:build:development",
+            "buildTarget": "marketplace-ui:build:development",
             "setupFiles": ["test-setup.ts"],
             "runnerConfig": "vitest.config.ts"
           },
