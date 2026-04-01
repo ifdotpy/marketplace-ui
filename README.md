@@ -14,7 +14,7 @@ npm run start
 We have to serve a content-configurations - `pm-content-configuration.json` for this microfrontend.
 
 
-### Updating GraphQL Schemas
+## Updating GraphQL Schemas
 
 The application uses GraphQL schemas from two endpoints that need to be merged:
 - **Marketplace Virtual Workspace**: Contains marketplace-specific types (MarketplaceEntry, etc.)
