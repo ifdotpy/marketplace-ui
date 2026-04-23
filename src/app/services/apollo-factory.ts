@@ -100,7 +100,7 @@ export class ApolloFactory {
           Authorization: `Bearer ${nodeContext.token}`,
         }),
       }),
-      this.httpLink.create({}),
+      this.httpLink.create({ includeExtensions: true }),
     );
 
     const link = ApolloLink.from([clusterTargetLink, contextLink, splitClient]);
@@ -147,7 +147,7 @@ export class ApolloFactory {
           Authorization: `Bearer ${nodeContext.token}`,
         }),
       }),
-      this.httpLink.create({}),
+      this.httpLink.create({ includeExtensions: true }),
     );
 
     const link = ApolloLink.from([clusterTargetLink, contextLink, splitClient]);
