@@ -48,9 +48,16 @@ export class ApolloFactory {
 
   private getUrl(nodeContext: NodeContext): string {
     return nodeContext.portalContext.crdGatewayApiUrl.replace(
-      'kubernetes-graphql-gateway/root',
-      'kubernetes-graphql-gateway/virtual-workspace/marketplace/root',
+      /gateway\/api\/clusters\/.+/,
+      'gateway/api/clusters/single-marketplace/graphql',
     );
+  }
+
+  private getClusterTarget(nodeContext: NodeContext): string {
+    const match = nodeContext.portalContext.crdGatewayApiUrl.match(
+      /gateway\/api\/clusters\/([^/]+)/,
+    );
+    return match?.[1] ?? '';
   }
 
   public readonly wsapollo = (nodeContext: NodeContext): Apollo =>
@@ -62,46 +69,13 @@ export class ApolloFactory {
   private createWSApolloOptions(
     nodeContext: NodeContext,
   ): ApolloClientOptions {
-    const contextLink = setContext(() => {
-      return {
-        uri: () => nodeContext.portalContext.crdGatewayApiUrl,
-        headers: new HttpHeaders({
-          Authorization: `Bearer ${nodeContext.token}`,
-          Accept: 'charset=utf-8',
-        }),
-      };
+    const clusterTarget = this.getClusterTarget(nodeContext);
+
+    const clusterTargetLink = new ApolloLink((operation, forward) => {
+      operation.extensions = { ...operation.extensions, clusterTarget };
+      return forward(operation);
     });
 
-    const splitClient = split(
-      ({ query }) => {
-        const definition = getMainDefinition(query);
-        return (
-          definition.kind === 'OperationDefinition' &&
-          definition.operation === 'subscription'
-        );
-      },
-      new SSELink({
-        url: () => this.getUrl(nodeContext),
-        headers: () => ({
-          Authorization: `Bearer ${nodeContext.token}`,
-        }),
-      }),
-      this.httpLink.create({}),
-    );
-
-    const link = ApolloLink.from([contextLink, splitClient]);
-    const cache = new InMemoryCache();
-
-    return {
-      link,
-      cache,
-    };
-  }
-
-
-  private createApolloOptions(
-    nodeContext: NodeContext,
-  ): ApolloClientOptions {
     const contextLink = setContext(() => {
       return {
         uri: () => this.getUrl(nodeContext),
@@ -129,7 +103,54 @@ export class ApolloFactory {
       this.httpLink.create({}),
     );
 
-    const link = ApolloLink.from([contextLink, splitClient]);
+    const link = ApolloLink.from([clusterTargetLink, contextLink, splitClient]);
+    const cache = new InMemoryCache();
+
+    return {
+      link,
+      cache,
+    };
+  }
+
+
+  private createApolloOptions(
+    nodeContext: NodeContext,
+  ): ApolloClientOptions {
+    const clusterTarget = this.getClusterTarget(nodeContext);
+
+    const clusterTargetLink = new ApolloLink((operation, forward) => {
+      operation.extensions = { ...operation.extensions, clusterTarget };
+      return forward(operation);
+    });
+
+    const contextLink = setContext(() => {
+      return {
+        uri: () => this.getUrl(nodeContext),
+        headers: new HttpHeaders({
+          Authorization: `Bearer ${nodeContext.token}`,
+          Accept: 'charset=utf-8',
+        }),
+      };
+    });
+
+    const splitClient = split(
+      ({ query }) => {
+        const definition = getMainDefinition(query);
+        return (
+          definition.kind === 'OperationDefinition' &&
+          definition.operation === 'subscription'
+        );
+      },
+      new SSELink({
+        url: () => this.getUrl(nodeContext),
+        headers: () => ({
+          Authorization: `Bearer ${nodeContext.token}`,
+        }),
+      }),
+      this.httpLink.create({}),
+    );
+
+    const link = ApolloLink.from([clusterTargetLink, contextLink, splitClient]);
     const cache = new InMemoryCache();
 
     return {
