@@ -77,10 +77,10 @@ describe('GraphqlService', () => {
         GraphqlService,
         provideMockStore({}),
         MockProvider(ApolloFactory, {
-          apollo: vi.fn().mockReturnValue({
+          marketplace: vi.fn().mockReturnValue({
             query: mockApolloQuery,
           }),
-          wsapollo: vi.fn().mockReturnValue({
+          workspace: vi.fn().mockReturnValue({
             mutate: mockWsApolloMutate,
           }),
         }),

@@ -1,15 +1,12 @@
 import { Injectable, NgZone, inject } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
 import {
-  type ApolloClientOptions,
+  ApolloClient,
   ApolloLink,
   Observable as ApolloObservable,
-  FetchResult,
   InMemoryCache,
-  Operation,
-  split,
 } from '@apollo/client/core';
-import { setContext } from '@apollo/client/link/context';
+import { SetContextLink } from '@apollo/client/link/context';
 import { getMainDefinition } from '@apollo/client/utilities';
 import { Apollo } from 'apollo-angular';
 import { HttpLink } from 'apollo-angular/http';
@@ -25,7 +22,7 @@ class SSELink extends ApolloLink {
     this.client = createClient(options);
   }
 
-  public override request(operation: Operation): ApolloObservable<FetchResult> {
+  public override request(operation: ApolloLink.Operation): ApolloObservable<ApolloLink.Result> {
     return new ApolloObservable((sink) => {
       return this.client.subscribe(
         { ...operation, query: print(operation.query) },
@@ -46,11 +43,15 @@ export class ApolloFactory {
   private httpLink = inject(HttpLink);
   private ngZone = inject(NgZone);
 
-  private getUrl(nodeContext: NodeContext): string {
+  private getMarketplaceUrl(nodeContext: NodeContext): string {
     return nodeContext.portalContext.crdGatewayApiUrl.replace(
       /gateway\/api\/clusters\/.+/,
       'gateway/api/clusters/single-marketplace/graphql',
     );
+  }
+
+  private getWorkspaceUrl(nodeContext: NodeContext): string {
+    return nodeContext.portalContext.crdGatewayApiUrl;
   }
 
   private getClusterTarget(nodeContext: NodeContext): string {
@@ -60,15 +61,15 @@ export class ApolloFactory {
     return match?.[1] ?? '';
   }
 
-  public readonly wsapollo = (nodeContext: NodeContext): Apollo =>
-    new Apollo(this.ngZone, this.createWSApolloOptions(nodeContext));
+  public readonly workspace = (nodeContext: NodeContext): Apollo =>
+    new Apollo(this.ngZone, this.createWorkspaceApolloOptions(nodeContext));
 
-  public readonly apollo = (nodeContext: NodeContext): Apollo =>
-    new Apollo(this.ngZone, this.createApolloOptions(nodeContext));
+  public readonly marketplace = (nodeContext: NodeContext): Apollo =>
+    new Apollo(this.ngZone, this.createMarketplaceApolloOptions(nodeContext));
 
-  private createWSApolloOptions(
+  private createWorkspaceApolloOptions(
     nodeContext: NodeContext,
-  ): ApolloClientOptions {
+  ): ApolloClient.Options {
     const clusterTarget = this.getClusterTarget(nodeContext);
 
     const clusterTargetLink = new ApolloLink((operation, forward) => {
@@ -76,9 +77,9 @@ export class ApolloFactory {
       return forward(operation);
     });
 
-    const contextLink = setContext(() => {
+    const contextLink = new SetContextLink(() => {
       return {
-        uri: () => this.getUrl(nodeContext),
+        uri: () => this.getWorkspaceUrl(nodeContext),
         headers: new HttpHeaders({
           Authorization: `Bearer ${nodeContext.token}`,
           Accept: 'charset=utf-8',
@@ -86,8 +87,8 @@ export class ApolloFactory {
       };
     });
 
-    const splitClient = split(
-      ({ query }) => {
+    const splitClient = ApolloLink.split(
+      ({ query }: { query: ApolloLink.Operation['query'] }) => {
         const definition = getMainDefinition(query);
         return (
           definition.kind === 'OperationDefinition' &&
@@ -95,7 +96,7 @@ export class ApolloFactory {
         );
       },
       new SSELink({
-        url: () => this.getUrl(nodeContext),
+        url: () => this.getWorkspaceUrl(nodeContext),
         headers: () => ({
           Authorization: `Bearer ${nodeContext.token}`,
         }),
@@ -113,9 +114,9 @@ export class ApolloFactory {
   }
 
 
-  private createApolloOptions(
+  private createMarketplaceApolloOptions(
     nodeContext: NodeContext,
-  ): ApolloClientOptions {
+  ): ApolloClient.Options {
     const clusterTarget = this.getClusterTarget(nodeContext);
 
     const clusterTargetLink = new ApolloLink((operation, forward) => {
@@ -123,9 +124,9 @@ export class ApolloFactory {
       return forward(operation);
     });
 
-    const contextLink = setContext(() => {
+    const contextLink = new SetContextLink(() => {
       return {
-        uri: () => this.getUrl(nodeContext),
+        uri: () => this.getMarketplaceUrl(nodeContext),
         headers: new HttpHeaders({
           Authorization: `Bearer ${nodeContext.token}`,
           Accept: 'charset=utf-8',
@@ -133,8 +134,8 @@ export class ApolloFactory {
       };
     });
 
-    const splitClient = split(
-      ({ query }) => {
+    const splitClient = ApolloLink.split(
+      ({ query }: { query: ApolloLink.Operation['query'] }) => {
         const definition = getMainDefinition(query);
         return (
           definition.kind === 'OperationDefinition' &&
@@ -142,7 +143,7 @@ export class ApolloFactory {
         );
       },
       new SSELink({
-        url: () => this.getUrl(nodeContext),
+        url: () => this.getMarketplaceUrl(nodeContext),
         headers: () => ({
           Authorization: `Bearer ${nodeContext.token}`,
         }),

@@ -63,12 +63,12 @@ describe('ApolloFactory', () => {
     factory = TestBed.inject(ApolloFactory);
   });
 
-  describe('apollo (marketplace client)', () => {
+  describe('marketplace (marketplace client)', () => {
     it('should use single-marketplace path and set clusterTarget extension', async () => {
       const ctx = buildNodeContext(
         'https://host/gateway/api/clusters/root:orgs:demo/graphql',
       );
-      const apollo = factory.apollo(ctx);
+      const apollo = factory.marketplace(ctx);
 
       await firstValueFrom(apollo.query({ query: QUERY, fetchPolicy: 'no-cache' }));
 
@@ -84,7 +84,7 @@ describe('ApolloFactory', () => {
       const ctx = buildNodeContext(
         'https://demo.portal.localhost:8443/gateway/api/clusters/root:orgs:demo:test/graphql',
       );
-      const apollo = factory.apollo(ctx);
+      const apollo = factory.marketplace(ctx);
 
       await firstValueFrom(apollo.query({ query: QUERY, fetchPolicy: 'no-cache' }));
 
@@ -97,20 +97,36 @@ describe('ApolloFactory', () => {
     });
   });
 
-  describe('wsapollo (workspace client)', () => {
-    it('should use single-marketplace path and set clusterTarget extension for queries', async () => {
+  describe('workspace (workspace client)', () => {
+    it('should use the original workspace cluster path and set clusterTarget extension', async () => {
       const ctx = buildNodeContext(
         'https://host/gateway/api/clusters/root:orgs:demo/graphql',
       );
-      const apollo = factory.wsapollo(ctx);
+      const apollo = factory.workspace(ctx);
 
       await firstValueFrom(apollo.query({ query: QUERY, fetchPolicy: 'no-cache' }));
 
       expect(capturedUri).toBe(
-        'https://host/gateway/api/clusters/single-marketplace/graphql',
+        'https://host/gateway/api/clusters/root:orgs:demo/graphql',
       );
       expect(capturedExtensions).toEqual(
         expect.objectContaining({ clusterTarget: 'root:orgs:demo' }),
+      );
+    });
+
+    it('should handle complex cluster paths', async () => {
+      const ctx = buildNodeContext(
+        'https://demo.portal.localhost:8443/gateway/api/clusters/root:orgs:demo:test/graphql',
+      );
+      const apollo = factory.workspace(ctx);
+
+      await firstValueFrom(apollo.query({ query: QUERY, fetchPolicy: 'no-cache' }));
+
+      expect(capturedUri).toBe(
+        'https://demo.portal.localhost:8443/gateway/api/clusters/root:orgs:demo:test/graphql',
+      );
+      expect(capturedExtensions).toEqual(
+        expect.objectContaining({ clusterTarget: 'root:orgs:demo:test' }),
       );
     });
   });

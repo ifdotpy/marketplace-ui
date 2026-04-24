@@ -24,7 +24,7 @@ export class GraphqlService {
       filter((x) => !!x),
       switchMap((context) => {
         return this.apolloFactory
-          .apollo(context)
+          .marketplace(context)
           .query<{ getMarketplaceEntriesQuery: MarketplaceEntry[] }>({
             query: getMarketplaceEntriesQuery,
             fetchPolicy: 'no-cache',
@@ -64,7 +64,7 @@ export class GraphqlService {
       filter((x) => !!x),
       switchMap((context) => {
         return this.apolloFactory
-          .apollo(context)
+          .marketplace(context)
           .query<{ getMarketplaceEntriesQuery: MarketplaceEntry[] }>({
             query: getMarketplaceEntriesQuery,
             variables: {
@@ -107,7 +107,7 @@ export class GraphqlService {
       filter((x) => !!x),
       switchMap((context) =>
         this.apolloFactory
-          .wsapollo(context)
+          .workspace(context)
           .mutate({
             mutation: createAPIBindingMutation,
             variables: {
@@ -134,7 +134,7 @@ export class GraphqlService {
       filter((x) => !!x),
       switchMap((context) =>
         this.apolloFactory
-          .wsapollo(context)
+          .workspace(context)
           .mutate({
             mutation: deleteAPIBindingMutation,
             variables: {
