@@ -16,7 +16,7 @@ import { MarketplaceEntry } from 'models/provider-metadata';
 
 function buildMarketplaceEntry(opts: {
   name?: string;
-  installed?: boolean;
+  apiBindingName?: string;
   displayName?: string;
   description?: string;
   category?: string;
@@ -24,7 +24,7 @@ function buildMarketplaceEntry(opts: {
   return {
     metadata: { name: opts.name ?? 'test-ext' },
     spec: {
-      installed: opts.installed ?? false,
+      apiBindingName: opts.apiBindingName,
       apiExport: {
         metadata: JSON.stringify({
           annotations: { 'kcp.io/path': '/workspaces/test' },
@@ -95,8 +95,8 @@ describe('ExtensionAllComponent', () => {
       });
 
       const entries: MarketplaceEntry[] = [
-        buildMarketplaceEntry({ name: 'ext1', installed: false, displayName: 'Extension One', description: 'Desc One', category: 'Category A' }),
-        buildMarketplaceEntry({ name: 'ext2', installed: true, displayName: 'Extension Two', description: 'Desc Two', category: 'Category B' }),
+        buildMarketplaceEntry({ name: 'ext1', displayName: 'Extension One', description: 'Desc One', category: 'Category A' }),
+        buildMarketplaceEntry({ name: 'ext2', apiBindingName: 'ext2-abc12', displayName: 'Extension Two', description: 'Desc Two', category: 'Category B' }),
       ];
 
       store.overrideSelector(selectAllProviders, entries);
@@ -106,28 +106,28 @@ describe('ExtensionAllComponent', () => {
       expect((emitted as any[]).length).toBe(2);
     });
 
-    it('should set badge text to INSTALLED when installed is true', () => {
+    it('should set badge text to INSTALLED when apiBindingName is present', () => {
       let emitted: any[] = [];
       component.installableProviders.pipe(take(1)).subscribe((items) => {
         emitted = items;
       });
 
       store.overrideSelector(selectAllProviders, [
-        buildMarketplaceEntry({ name: 'ext1', installed: true }),
+        buildMarketplaceEntry({ name: 'ext1', apiBindingName: 'ext1-abc12' }),
       ]);
       store.refreshState();
 
       expect(emitted[0].badge.text).toBe('INSTALLED');
     });
 
-    it('should set badge text to empty string when not installed', () => {
+    it('should set badge text to empty string when apiBindingName is absent', () => {
       let emitted: any[] = [];
       component.installableProviders.pipe(take(1)).subscribe((items) => {
         emitted = items;
       });
 
       store.overrideSelector(selectAllProviders, [
-        buildMarketplaceEntry({ name: 'ext1', installed: false }),
+        buildMarketplaceEntry({ name: 'ext1' }),
       ]);
       store.refreshState();
 

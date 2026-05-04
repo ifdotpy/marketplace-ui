@@ -28,10 +28,10 @@ const buildProviderMetadata = (overrides: Partial<ProviderMetadata['spec']> = {}
   },
 });
 
-const buildMarketplaceEntry = (installed = false, overrides: Partial<ProviderMetadata['spec']> = {}): MarketplaceEntry => ({
+const buildMarketplaceEntry = (apiBindingName?: string, overrides: Partial<ProviderMetadata['spec']> = {}): MarketplaceEntry => ({
   metadata: { name: 'test-provider' },
   spec: {
-    installed,
+    apiBindingName,
     apiExport: {
       metadata: JSON.stringify({
         annotations: { 'kcp.io/path': '/workspaces/test' },
@@ -112,27 +112,27 @@ describe('ProviderService', () => {
   });
 
   describe('uninstallProviderInstance', () => {
-    it('should dispatch unInstallProviderInstance action', () => {
+    it('should dispatch unInstallProviderInstance action with apiBindingName', () => {
       const dispatchSpy = vi.spyOn(store, 'dispatch');
-      const entry = buildMarketplaceEntry(true);
+      const entry = buildMarketplaceEntry('test-provider-abc12');
 
       service.uninstallProviderInstance(entry);
 
       expect(dispatchSpy).toHaveBeenCalledWith(
-        unInstallProviderInstance({ providerName: 'test-provider' }),
+        unInstallProviderInstance({ providerName: 'test-provider-abc12' }),
       );
     });
   });
 
   describe('isInstallable and isUninstallable', () => {
-    it('should return true for isInstallable when not installed', () => {
-      const entry = buildMarketplaceEntry(false);
+    it('should return true for isInstallable when apiBindingName is absent', () => {
+      const entry = buildMarketplaceEntry(undefined);
       expect(service.isInstallable(entry)).toBe(true);
       expect(service.isUninstallable(entry)).toBe(false);
     });
 
-    it('should return true for isUninstallable when installed', () => {
-      const entry = buildMarketplaceEntry(true);
+    it('should return true for isUninstallable when apiBindingName is present', () => {
+      const entry = buildMarketplaceEntry('test-provider-abc12');
       expect(service.isInstallable(entry)).toBe(false);
       expect(service.isUninstallable(entry)).toBe(true);
     });
@@ -173,7 +173,7 @@ describe('ProviderService', () => {
       luigiClient.uxManager().showConfirmationModal = vi.fn().mockRejectedValue(new Error('dismissed'));
       const dispatchSpy = vi.spyOn(store, 'dispatch');
 
-      const result = await service.uninstallProviderInstanceDialog(buildMarketplaceEntry(true));
+      const result = await service.uninstallProviderInstanceDialog(buildMarketplaceEntry('test-provider-abc12'));
 
       expect(result).toBe(false);
       expect(dispatchSpy).not.toHaveBeenCalled();
@@ -193,14 +193,14 @@ describe('ProviderService', () => {
         }),
       );
 
-      const result = await service.uninstallProviderInstanceDialog(buildMarketplaceEntry(true, {
+      const result = await service.uninstallProviderInstanceDialog(buildMarketplaceEntry('test-provider-abc12', {
         displayName: 'Test Provider',
         provider: 'some-provider',
       }));
 
       expect(result).toBe(true);
       expect(dispatchSpy).toHaveBeenCalledWith(
-        unInstallProviderInstance({ providerName: 'test-provider' }),
+        unInstallProviderInstance({ providerName: 'test-provider-abc12' }),
       );
     });
   });

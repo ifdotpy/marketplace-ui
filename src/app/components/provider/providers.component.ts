@@ -80,7 +80,7 @@ export class ProvidersComponent implements OnInit {
             marketplaceEntry: MarketplaceEntry,
           ) => {
             let badge = '';
-            if (marketplaceEntry.spec.installed) {
+            if (marketplaceEntry.spec.apiBindingName) {
               badge = 'INSTALLED';
             }
             const labels = this.providerService.buildLabels(

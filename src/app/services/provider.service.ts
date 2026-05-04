@@ -47,7 +47,7 @@ export class ProviderService {
   uninstallProviderInstance(marketplaceEntry: MarketplaceEntry): void {
     this.store.dispatch(
       unInstallProviderInstance({
-        providerName: marketplaceEntry.metadata.name,
+        providerName: marketplaceEntry.spec.apiBindingName!,
       }),
     );
   }
@@ -100,11 +100,11 @@ export class ProviderService {
   }
 
   public isUninstallable(marketplaceEntry: MarketplaceEntry): boolean {
-    return marketplaceEntry.spec.installed;
+    return !!marketplaceEntry.spec.apiBindingName;
   }
 
   public isInstallable(marketplaceEntry: MarketplaceEntry): boolean {
-    return !marketplaceEntry.spec.installed;
+    return !marketplaceEntry.spec.apiBindingName;
   }
 
   public getIcon(provider: ProviderMetadata): string {

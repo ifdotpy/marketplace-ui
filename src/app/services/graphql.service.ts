@@ -84,7 +84,7 @@ export class GraphqlService {
   }
 
   installProviderInstance(entry: MarketplaceEntry): Observable<unknown> {
-    const name = entry.metadata.name;
+    const generateName = entry.metadata.name + '-';
     const metadata = JSON.parse(entry.spec.apiExport.metadata);
     const apiExportPath = metadata.annotations['kcp.io/path'];
     const apiExportName = metadata.name;
@@ -111,7 +111,7 @@ export class GraphqlService {
           .mutate({
             mutation: createAPIBindingMutation,
             variables: {
-              name: name,
+              generateName: generateName,
               apiExportName: apiExportName,
               apiExportPath: apiExportPath,
               permissionClaims: acceptedPermissionClaims,

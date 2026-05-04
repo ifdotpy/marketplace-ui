@@ -2,10 +2,10 @@ import { retrievedProviders } from './providers.actions';
 import { initialState, providersReducer } from './providers.reducer';
 import { MarketplaceEntry } from 'models/provider-metadata';
 
-const buildEntry = (name: string, displayName: string, installed = false): MarketplaceEntry => ({
+const buildEntry = (name: string, displayName: string, apiBindingName?: string): MarketplaceEntry => ({
   metadata: { name },
   spec: {
-    installed,
+    apiBindingName,
     apiExport: {
       metadata: '{}',
       spec: { permissionClaims: [] },

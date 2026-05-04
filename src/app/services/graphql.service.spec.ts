@@ -13,7 +13,7 @@ import { MockProvider } from 'ng-mocks';
 const mockMarketplaceEntry: MarketplaceEntry = {
   metadata: { name: 'test-provider' },
   spec: {
-    installed: false,
+    apiBindingName: 'test-provider-abc12',
     apiExport: {
       metadata: JSON.stringify({
         annotations: { 'kcp.io/path': '/workspaces/test' },
@@ -234,7 +234,7 @@ describe('GraphqlService', () => {
         expect.objectContaining({
           mutation: expect.anything(),
           variables: expect.objectContaining({
-            name: 'test-provider',
+            generateName: 'test-provider-',
             apiExportName: 'test-api-export',
             apiExportPath: '/workspaces/test',
           }),

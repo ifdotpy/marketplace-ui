@@ -94,7 +94,7 @@ export interface MarketplaceEntry {
     name: string;
   };
   spec: {
-    installed: boolean;
+    apiBindingName?: string;
     apiExport: {
       metadata: string;
       spec: {

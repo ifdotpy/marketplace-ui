@@ -196,7 +196,7 @@ export class ProviderDetailDialogComponent implements OnInit, OnDestroy {
   }
 
   protected showInstalledLabel(): boolean {
-    return this.marketplaceEntry?.spec.installed;
+    return !!this.marketplaceEntry?.spec.apiBindingName;
   }
 
   protected getIcon(extension: ProviderMetadata): string {

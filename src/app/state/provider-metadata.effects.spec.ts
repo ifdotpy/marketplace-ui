@@ -17,7 +17,6 @@ import { requestFailed } from 'state/common.action';
 const buildMarketplaceEntry = (): MarketplaceEntry => ({
   metadata: { name: 'test-provider' },
   spec: {
-    installed: false,
     apiExport: {
       metadata: JSON.stringify({
         annotations: { 'kcp.io/path': '/workspaces/test' },

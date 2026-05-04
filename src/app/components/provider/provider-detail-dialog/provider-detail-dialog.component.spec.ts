@@ -25,7 +25,6 @@ const buildMarketplaceEntry = (
 ): MarketplaceEntry => ({
   metadata: { name: 'test-provider' },
   spec: {
-    installed: false,
     apiExport: { metadata: '', spec: { permissionClaims: [] } },
     providerMetadata: {
       spec: {
@@ -148,10 +147,10 @@ describe('ProviderDetailDialogComponent', () => {
   });
 
   describe('showInstalledLabel', () => {
-    it('should return true when spec.installed is true', () => {
+    it('should return true when spec.apiBindingName is present', () => {
       component.marketplaceEntry = buildMarketplaceEntry({
         spec: {
-          installed: true,
+          apiBindingName: 'test-provider-abc12',
           apiExport: { metadata: '', spec: { permissionClaims: [] } },
           providerMetadata: { spec: { displayName: 'Test' } },
         },
@@ -159,7 +158,7 @@ describe('ProviderDetailDialogComponent', () => {
       expect(component['showInstalledLabel']()).toBe(true);
     });
 
-    it('should return false when spec.installed is false', () => {
+    it('should return false when spec.apiBindingName is absent', () => {
       component.marketplaceEntry = buildMarketplaceEntry();
       expect(component['showInstalledLabel']()).toBe(false);
     });

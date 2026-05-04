@@ -2,7 +2,7 @@ import { gql } from 'apollo-angular';
 
 export const createAPIBindingMutation = gql`
   mutation (
-    $name: String!
+    $generateName: String!
     $apiExportPath: String!
     $apiExportName: String!
     $permissionClaims: [ApisKcpIoV1alpha2APIBindingSpecPermissionClaimsInput]
@@ -11,7 +11,7 @@ export const createAPIBindingMutation = gql`
       v1alpha2 {
         createAPIBinding(
           object: {
-            metadata: { name: $name }
+            metadata: { generateName: $generateName }
             spec: {
               reference: {
                 export: { name: $apiExportName, path: $apiExportPath }
@@ -49,7 +49,7 @@ export const getMarketplaceEntriesQuery = gql`
               name
             }
             spec {
-              installed
+              apiBindingName
               apiExport {
                 metadata
                 spec {

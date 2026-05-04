@@ -8,10 +8,10 @@ import { MarketplaceEntry } from 'models/index';
 import { of, ReplaySubject, EMPTY, Observable } from 'rxjs';
 import { GraphqlService } from 'services/graphql.service';
 
-const buildMarketplaceEntry = (name: string, installed = false): MarketplaceEntry => ({
+const buildMarketplaceEntry = (name: string, apiBindingName?: string): MarketplaceEntry => ({
   metadata: { name },
   spec: {
-    installed,
+    apiBindingName,
     apiExport: {
       metadata: JSON.stringify({
         annotations: { 'kcp.io/path': '/workspaces/test' },

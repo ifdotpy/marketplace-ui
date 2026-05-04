@@ -7,7 +7,7 @@ export const selectProviders = (state: ProviderState) => {
 
 export const selectInstalledProviders = createSelector(
   selectProviders,
-  (marketplaceEntries) => marketplaceEntries.filter((x) => x.spec.installed),
+  (marketplaceEntries) => marketplaceEntries.filter((x) => !!x.spec.apiBindingName),
 );
 
 export const selectAllProviders = createSelector(
