@@ -5,7 +5,7 @@ export const createAPIBindingMutation = gql`
     $generateName: String!
     $apiExportPath: String!
     $apiExportName: String!
-    $permissionClaims: [ApisKcpIoV1alpha2APIBindingSpecPermissionClaimsInput]
+    $permissionClaims: [ApisKcpIoV1alpha2APIBindingSpecPermissionClaims_Input]
   ) {
     apis_kcp_io {
       v1alpha2 {
