@@ -1,0 +1,42 @@
+name: ci
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    uses: platform-mesh/.github/.github/workflows/job-node-test.yml@main
+    secrets: inherit
+
+  docker-build:
+    uses: platform-mesh/.github/.github/workflows/job-docker-build.yml@main
+    with:
+      imageTagName: ghcr.io/platform-mesh/marketplace-ui
+
+  quality-gate:
+    if: always()
+    permissions: {}
+    needs: [test, docker-build]
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    steps:
+      - name: Check results
+        run: |
+          if [[ "${{ needs.test.result }}" != "success" ]]; then
+            echo "test failed"
+            exit 1
+          fi
+          if [[ "${{ needs.docker-build.result }}" != "success" ]]; then
+            echo "docker-build failed"
+            exit 1
+          fi
