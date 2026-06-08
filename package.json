@@ -71,7 +71,7 @@
     "@openmfp/eslint-config-typescript": "0.7.11",
     "@openmfp/gha-cache": "0.5.35",
     "@types/node": "24.12.4",
-    "@vitest/coverage-v8": "^4.1.6",
+    "@vitest/coverage-v8": "^4.1.7",
     "angular-eslint": "^21.4.0",
     "eslint": "^9.29.0",
     "eslint-config-prettier": "^10.0.2",
@@ -85,7 +85,7 @@
     "ts-node": "10.9.2",
     "typescript": "5.9.3",
     "typescript-eslint": "8.57.1",
-    "vitest": "^4.1.6",
+    "vitest": "^4.1.7",
     "vitest-mock-extended": "^4.0.0"
   },
   "type": "module"
