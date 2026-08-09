@@ -19,16 +19,16 @@ concurrency:
 
 jobs:
   test:
-    uses: platform-mesh/.github/.github/workflows/job-node-test.yml@75f52df7bff585bcb2d794a7bbeec132354933fb # main
+    uses: platform-mesh/.github/.github/workflows/job-node-test.yml@b2ef3a19ca62f72a7842058ad4b356099d1a0cd1 # main
     secrets: inherit
 
   create-version:
-    uses: platform-mesh/.github/.github/workflows/job-create-version.yml@75f52df7bff585bcb2d794a7bbeec132354933fb # main
+    uses: platform-mesh/.github/.github/workflows/job-create-version.yml@b2ef3a19ca62f72a7842058ad4b356099d1a0cd1 # main
     secrets: inherit
 
   docker-build-push:
     needs: [create-version, test]
-    uses: platform-mesh/.github/.github/workflows/job-docker-build-push.yml@75f52df7bff585bcb2d794a7bbeec132354933fb # main
+    uses: platform-mesh/.github/.github/workflows/job-docker-build-push.yml@b2ef3a19ca62f72a7842058ad4b356099d1a0cd1 # main
     with:
       imageTagName: ghcr.io/platform-mesh/marketplace-ui
       version: ${{ needs.create-version.outputs.version }}
@@ -37,7 +37,7 @@ jobs:
 
   update-version:
     needs: [create-version, docker-build-push]
-    uses: platform-mesh/.github/.github/workflows/job-chart-version-update.yml@75f52df7bff585bcb2d794a7bbeec132354933fb # main
+    uses: platform-mesh/.github/.github/workflows/job-chart-version-update.yml@b2ef3a19ca62f72a7842058ad4b356099d1a0cd1 # main
     secrets: inherit
     with:
       appVersion: ${{ needs.create-version.outputs.version }}
@@ -46,13 +46,13 @@ jobs:
 
   sbom:
     needs: [create-version, docker-build-push]
-    uses: platform-mesh/.github/.github/workflows/job-sbom.yml@75f52df7bff585bcb2d794a7bbeec132354933fb # main
+    uses: platform-mesh/.github/.github/workflows/job-sbom.yml@b2ef3a19ca62f72a7842058ad4b356099d1a0cd1 # main
     with:
       imageReference: ghcr.io/platform-mesh/marketplace-ui:${{ needs.create-version.outputs.version }}
 
   image-ocm:
     needs: [create-version, docker-build-push, sbom]
-    uses: platform-mesh/.github/.github/workflows/job-image-ocm.yml@75f52df7bff585bcb2d794a7bbeec132354933fb # main
+    uses: platform-mesh/.github/.github/workflows/job-image-ocm.yml@b2ef3a19ca62f72a7842058ad4b356099d1a0cd1 # main
     secrets: inherit
     with:
       imageReference: ghcr.io/platform-mesh/marketplace-ui:${{ needs.create-version.outputs.version }}
@@ -62,7 +62,7 @@ jobs:
 
   scan-sbom:
     needs: [create-version, docker-build-push, sbom, image-ocm]
-    uses: platform-mesh/.github/.github/workflows/job-trivy-sbom.yml@75f52df7bff585bcb2d794a7bbeec132354933fb # main
+    uses: platform-mesh/.github/.github/workflows/job-trivy-sbom.yml@b2ef3a19ca62f72a7842058ad4b356099d1a0cd1 # main
     permissions:
       contents: read
       packages: read
