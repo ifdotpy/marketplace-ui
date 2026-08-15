@@ -58,6 +58,7 @@ describe('ProviderUIExtensionsComponent', () => {
     expect(containers).toHaveLength(2);
     expect(containers[0].viewurl).toBe('https://one.example/renderer');
     expect(containers[1].viewurl).toBe('https://two.example/renderer');
+    expect(containers[0].skipCookieCheck).toBe('true');
   });
 
   it('passes only the current and visible providers in the versioned context', async () => {
