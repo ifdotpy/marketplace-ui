@@ -1,0 +1,13 @@
+@for (extension of extensions(); track $index) {
+  <luigi-container
+    [attr.data-testid]="'provider-ui-extension-' + $index"
+    [context]="context()"
+    [label]="currentProvider().spec.providerMetadata.spec.displayName"
+    [sandboxRules]="['allow-scripts', 'allow-same-origin', 'allow-popups']"
+    [skipCookieCheck]="true"
+    [style.height]="extensionHeight($index)"
+    [viewurl]="extension.url"
+    [webcomponent]="false"
+    (custom-message)="handleCustomMessage($event, $index)"
+  />
+}

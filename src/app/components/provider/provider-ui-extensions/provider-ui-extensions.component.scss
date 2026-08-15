@@ -1,0 +1,13 @@
+:host {
+  display: block;
+}
+
+luigi-container {
+  display: block;
+  min-height: 7.5rem;
+  width: 100%;
+}
+
+luigi-container + luigi-container {
+  margin-top: 1rem;
+}

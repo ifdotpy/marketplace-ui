@@ -14,8 +14,7 @@ export const selectProviderMetadataProductOwners = createSelector(
       return [];
     }
     return contacts.filter(
-      (x) =>
-        x.roles && x.roles.find((r) => r.toLowerCase() === 'product owner'),
+      (x) => x.role && x.role.find((r) => r.toLowerCase() === 'product owner'),
     );
   },
   (productOwners) => productOwners,

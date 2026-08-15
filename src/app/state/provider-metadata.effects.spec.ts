@@ -3,16 +3,17 @@ import {
   retrievedProviderMetadata,
 } from './provider-metadata.action';
 import { ProviderMetadataEffects } from './provider-metadata.effects';
-import { TestBed } from '@angular/core/testing';
 import { HttpErrorResponse } from '@angular/common/http';
+import { TestBed } from '@angular/core/testing';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
-import { MarketplaceEntry, Label } from 'models/provider-metadata';
+import { Label, MarketplaceEntry } from 'models/provider-metadata';
 import { MockProvider } from 'ng-mocks';
-import { of, throwError, ReplaySubject } from 'rxjs';
+import { ReplaySubject, of, throwError } from 'rxjs';
 import { GraphqlService } from 'services/graphql.service';
 import { ProviderService } from 'services/provider.service';
 import { requestFailed } from 'state/common.action';
+import { retrievedProviders } from 'state/providers.actions';
 
 const buildMarketplaceEntry = (): MarketplaceEntry => ({
   metadata: { name: 'test-provider' },
@@ -47,7 +48,7 @@ describe('ProviderMetadataEffects', () => {
       providers: [
         provideMockActions(() => actions$),
         MockProvider(GraphqlService, {
-          getMarketplaceEntry: vi.fn(),
+          getMarketplaceEntries: vi.fn(),
         }),
         MockProvider(ProviderService, {
           buildLabels: vi.fn().mockReturnValue([]),
@@ -65,7 +66,9 @@ describe('ProviderMetadataEffects', () => {
       actions$.next(loadProviderMetadata({}));
 
       let emittedAction: Action | undefined;
-      effects.loadProviderMetadata.subscribe((action) => (emittedAction = action));
+      effects.loadProviderMetadata.subscribe(
+        (action) => (emittedAction = action),
+      );
 
       expect(emittedAction).toEqual(
         expect.objectContaining({
@@ -76,31 +79,40 @@ describe('ProviderMetadataEffects', () => {
       );
     });
 
-    it('should call getMarketplaceEntry with providerName', () => {
+    it('should retrieve all visible marketplace entries', () => {
       const entry = buildMarketplaceEntry();
-      vi.spyOn(graphqlService, 'getMarketplaceEntry').mockReturnValue(of(entry));
+      vi.spyOn(graphqlService, 'getMarketplaceEntries').mockReturnValue(
+        of([entry]),
+      );
 
       actions$.next(loadProviderMetadata({ providerName: 'test-provider' }));
 
       let emittedAction: Action | undefined;
-      effects.loadProviderMetadata.subscribe((action) => (emittedAction = action));
+      effects.loadProviderMetadata.subscribe(
+        (action) => (emittedAction = action),
+      );
 
-      expect(graphqlService.getMarketplaceEntry).toHaveBeenCalledWith('test-provider');
+      expect(graphqlService.getMarketplaceEntries).toHaveBeenCalledOnce();
     });
 
-    it('should emit retrievedProviderMetadata with labels applied', () => {
+    it('should expose all providers before the selected provider', () => {
       const entry = buildMarketplaceEntry();
       const labels: Label[] = [{ title: 'New', color: '6' }];
 
-      vi.spyOn(graphqlService, 'getMarketplaceEntry').mockReturnValue(of(entry));
+      vi.spyOn(graphqlService, 'getMarketplaceEntries').mockReturnValue(
+        of([entry]),
+      );
       vi.spyOn(providerService, 'buildLabels').mockReturnValue(labels);
 
       actions$.next(loadProviderMetadata({ providerName: 'test-provider' }));
 
-      let emittedAction: Action | undefined;
-      effects.loadProviderMetadata.subscribe((action) => (emittedAction = action));
+      const emittedActions: Action[] = [];
+      effects.loadProviderMetadata.subscribe((action) =>
+        emittedActions.push(action),
+      );
 
-      expect(emittedAction).toEqual(
+      expect(emittedActions).toEqual([
+        retrievedProviders({ providers: [entry] }),
         retrievedProviderMetadata({
           marketplaceEntry: expect.objectContaining({
             metadata: { name: 'test-provider' },
@@ -111,17 +123,24 @@ describe('ProviderMetadataEffects', () => {
             }),
           }),
         }),
-      );
+      ]);
     });
 
     it('should emit requestFailed on GraphQL error', () => {
-      const error = new HttpErrorResponse({ error: 'GraphQL error', status: 500 });
-      vi.spyOn(graphqlService, 'getMarketplaceEntry').mockReturnValue(throwError(() => error));
+      const error = new HttpErrorResponse({
+        error: 'GraphQL error',
+        status: 500,
+      });
+      vi.spyOn(graphqlService, 'getMarketplaceEntries').mockReturnValue(
+        throwError(() => error),
+      );
 
       actions$.next(loadProviderMetadata({ providerName: 'test-provider' }));
 
       let emittedAction: Action | undefined;
-      effects.loadProviderMetadata.subscribe((action) => (emittedAction = action));
+      effects.loadProviderMetadata.subscribe(
+        (action) => (emittedAction = action),
+      );
 
       expect(emittedAction).toEqual(
         requestFailed({

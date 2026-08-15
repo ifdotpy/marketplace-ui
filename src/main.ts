@@ -3,6 +3,7 @@ import { appConfig } from './app/app.config';
 import { provideZoneChangeDetection } from '@angular/core';
 // import { isDevMode } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
+import '@luigi-project/container';
 
 // import { init } from '@sentry/angular';
 

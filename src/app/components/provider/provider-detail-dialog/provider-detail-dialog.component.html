@@ -122,6 +122,12 @@
         {{ marketplaceEntry.spec.providerMetadata.spec.description }}
       </div>
 
+      @let marketplaceEntries = marketplaceEntriesObservable | async;
+      <app-provider-ui-extensions
+        [currentProvider]="marketplaceEntry"
+        [providers]="marketplaceEntries ?? [marketplaceEntry]"
+      />
+
       @if (marketplaceEntry.spec.providerMetadata.spec.documentation?.length) {
         <div class="page-section">
           <div class="page-section__title">
@@ -137,11 +143,11 @@
           </div>
           @for (
             doc of marketplaceEntry.spec.providerMetadata.spec.documentation;
-            track doc.name
+            track doc.url
           ) {
             <p>
               <a fd-link target="_blank" [href]="doc.url">
-                {{ doc.name || 'Documentation' }}
+                {{ doc.displayName || 'Documentation' }}
               </a>
             </p>
           }

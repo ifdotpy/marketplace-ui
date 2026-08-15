@@ -36,6 +36,7 @@
     "@fundamental-styles/common-css": "0.41.8",
     "@luigi-project/client": "^2.22.1",
     "@luigi-project/client-support-angular": "^21.1.0",
+    "@luigi-project/container": "1.7.9",
     "@ngrx/effects": "^21.0.1",
     "@ngrx/operators": "^21.0.1",
     "@ngrx/router-store": "^21.0.1",

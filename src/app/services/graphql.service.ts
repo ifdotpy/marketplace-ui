@@ -19,33 +19,6 @@ export class GraphqlService {
   private store = inject(Store);
   private apolloFactory = inject(ApolloFactory);
 
-  getMarketplaceEntry(providerName: string): Observable<MarketplaceEntry> {
-    return this.store.select(luigiContextSelector).pipe(
-      filter((x) => !!x),
-      switchMap((context) => {
-        return this.apolloFactory
-          .marketplace(context)
-          .query<{ getMarketplaceEntriesQuery: MarketplaceEntry[] }>({
-            query: getMarketplaceEntriesQuery,
-            fetchPolicy: 'no-cache',
-          })
-          .pipe(
-            map((apolloResponse: any) => {
-              return apolloResponse.data.marketplace_platform_mesh_io.v1alpha1
-                .MarketplaceEntries.items;
-            }),
-            map((entries: MarketplaceEntry[]) => {
-              const res = entries.filter((entry) => {
-                return entry.metadata.name === providerName;
-              });
-              return res;
-            }),
-            map((entries: MarketplaceEntry[]) => entries[0] || null),
-          );
-      }),
-    );
-  }
-
   createExtFilter(installableIn?: string[]): ProviderMetadataFilter {
     return installableIn
       ? { installableIn, excludeHiddenExtensions: true }
@@ -65,7 +38,7 @@ export class GraphqlService {
       switchMap((context) => {
         return this.apolloFactory
           .marketplace(context)
-          .query<{ getMarketplaceEntriesQuery: MarketplaceEntry[] }>({
+          .query<MarketplaceEntriesResponse>({
             query: getMarketplaceEntriesQuery,
             variables: {
               filter: extFilter,
@@ -73,11 +46,13 @@ export class GraphqlService {
             fetchPolicy: 'no-cache',
           })
           .pipe(
-            map(
-              (apolloResponse: any) =>
-                apolloResponse.data.marketplace_platform_mesh_io.v1alpha1
-                  .MarketplaceEntries.items,
-            ),
+            map((apolloResponse) => {
+              if (!apolloResponse.data) {
+                throw new Error('Marketplace response did not contain data');
+              }
+              return apolloResponse.data.marketplace_platform_mesh_io.v1alpha1
+                .MarketplaceEntries.items;
+            }),
           );
       }),
     );
@@ -165,4 +140,14 @@ export class GraphqlService {
       },
     });
   }
+}
+
+interface MarketplaceEntriesResponse {
+  marketplace_platform_mesh_io: {
+    v1alpha1: {
+      MarketplaceEntries: {
+        items: MarketplaceEntry[];
+      };
+    };
+  };
 }

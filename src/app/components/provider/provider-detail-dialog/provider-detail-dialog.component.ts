@@ -31,6 +31,7 @@ import {
   DynamicPageTitleComponent,
 } from '@fundamental-ngx/platform/dynamic-page';
 import { Store } from '@ngrx/store';
+import { ProviderUIExtensionsComponent } from 'components/provider/provider-ui-extensions/provider-ui-extensions.component';
 import { VerificationInfoComponent } from 'components/provider/verification-info/verification-info.component';
 import { PROVIDER_INSTANCE_INSTALLED } from 'models/luigi-go-back';
 import {
@@ -52,6 +53,7 @@ import {
   selectProviderMetadataSupportLinks,
 } from 'state/provider-metadata.selectors';
 import { ProviderState } from 'state/providerState';
+import { selectAllProviders } from 'state/providers.selectors';
 import { triggerMatomoEvent } from 'utils/helpers';
 
 @Component({
@@ -77,6 +79,7 @@ import { triggerMatomoEvent } from 'utils/helpers';
     AsyncPipe,
     ContentDensityDirective,
     VerificationInfoComponent,
+    ProviderUIExtensionsComponent,
   ],
   templateUrl: './provider-detail-dialog.component.html',
   styleUrl: './provider-detail-dialog.component.scss',
@@ -84,6 +87,7 @@ import { triggerMatomoEvent } from 'utils/helpers';
 })
 export class ProviderDetailDialogComponent implements OnInit, OnDestroy {
   marketplaceEntryObservable: Observable<MarketplaceEntry>;
+  marketplaceEntriesObservable: Observable<readonly MarketplaceEntry[]>;
   providerSubscription?: Subscription;
 
   isChanging?: Observable<boolean>;
@@ -102,6 +106,7 @@ export class ProviderDetailDialogComponent implements OnInit, OnDestroy {
     private contextService: PmLuigiContextService,
     private providerService: ProviderService,
   ) {
+    this.marketplaceEntriesObservable = this.store.select(selectAllProviders);
     this.marketplaceEntryObservable = combineLatest([
       this.contextService.contextObservable(),
     ]).pipe(

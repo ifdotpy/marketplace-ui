@@ -5,12 +5,12 @@ import {
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { MarketplaceEntry } from 'models/provider-metadata';
-import { of } from 'rxjs';
+import { from, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { GraphqlService } from 'services/graphql.service';
 import { ProviderService } from 'services/provider.service';
 import { requestFailed } from 'state/common.action';
+import { retrievedProviders } from 'state/providers.actions';
 
 @Injectable({ providedIn: 'root' })
 export class ProviderMetadataEffects {
@@ -31,8 +31,14 @@ export class ProviderMetadataEffects {
             }),
           );
         }
-        return this.graphqlService.getMarketplaceEntry(providerName).pipe(
-          map((marketplaceEntry: MarketplaceEntry) => {
+        return this.graphqlService.getMarketplaceEntries().pipe(
+          map((marketplaceEntries) => {
+            const marketplaceEntry = marketplaceEntries.find(
+              (entry) => entry.metadata.name === providerName,
+            );
+            if (!marketplaceEntry) {
+              throw new Error(`Provider ${providerName} was not found`);
+            }
             const labels = this.providerService.buildLabels(
               marketplaceEntry.spec.providerMetadata,
             );
@@ -40,10 +46,13 @@ export class ProviderMetadataEffects {
               ...marketplaceEntry.spec.providerMetadata.spec,
               labels,
             };
-            return marketplaceEntry;
+            return { marketplaceEntry, marketplaceEntries };
           }),
-          map((marketplaceEntry) =>
-            retrievedProviderMetadata({ marketplaceEntry }),
+          switchMap(({ marketplaceEntry, marketplaceEntries }) =>
+            from([
+              retrievedProviders({ providers: marketplaceEntries }),
+              retrievedProviderMetadata({ marketplaceEntry }),
+            ]),
           ),
         );
       }),

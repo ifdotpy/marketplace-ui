@@ -70,7 +70,9 @@ export const getMarketplaceEntriesQuery = gql`
                   }
                   displayName
                   description
+                  data
                   documentation {
+                    displayName
                     url
                   }
                   icon {
@@ -86,6 +88,9 @@ export const getMarketplaceEntriesQuery = gql`
                   preferredSupportChannels {
                     url
                     displayName
+                  }
+                  uiExtensions {
+                    url
                   }
                 }
               }

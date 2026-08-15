@@ -214,6 +214,25 @@ describe('ProviderDetailDialogComponent', () => {
     });
   });
 
+  it('renders documentation displayName', () => {
+    const store = TestBed.inject(MockStore) as MockStore;
+    const entry = buildMarketplaceEntry();
+    entry.spec.providerMetadata.spec.documentation = [
+      { displayName: 'ORD', url: 'https://example.com/ord' },
+    ];
+    store.overrideSelector(selectProviderMetadata, entry);
+    store.refreshState();
+    luigiContextSubject.next(
+      mock<IContextMessage>({ context: { providerName: 'test-provider' } }),
+    );
+    fixture.detectChanges();
+
+    const link = fixture.nativeElement.querySelector(
+      'a[href="https://example.com/ord"]',
+    );
+    expect(link?.textContent.trim()).toBe('ORD');
+  });
+
   describe('ngOnInit and ngOnDestroy', () => {
     it('should subscribe on init and unsubscribe on destroy', () => {
       const store = TestBed.inject(MockStore) as MockStore;
