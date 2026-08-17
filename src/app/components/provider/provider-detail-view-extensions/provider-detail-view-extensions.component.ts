@@ -43,7 +43,7 @@ export class ProviderDetailViewExtensionsComponent {
     (
       this.currentProvider().spec.providerMetadata.spec.detailViewExtensions ??
       []
-    ).filter(isSupportedExtension),
+    ).filter((extension) => this.isSupportedExtension(extension)),
   );
   protected readonly context = computed(() =>
     JSON.stringify(this.buildContext()),
@@ -91,12 +91,12 @@ export class ProviderDetailViewExtensionsComponent {
       providers: this.providers().map(toDetailViewExtensionProvider),
     };
   }
-}
 
-function isSupportedExtension(extension: DetailViewExtension): boolean {
-  try {
-    return ['http:', 'https:'].includes(new URL(extension.url).protocol);
-  } catch {
-    return false;
+  private isSupportedExtension(extension: DetailViewExtension): boolean {
+    try {
+      return ['http:', 'https:'].includes(new URL(extension.url).protocol);
+    } catch {
+      return false;
+    }
   }
 }
