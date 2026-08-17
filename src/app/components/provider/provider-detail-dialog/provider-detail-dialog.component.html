@@ -123,7 +123,7 @@
       </div>
 
       @let marketplaceEntries = marketplaceEntriesObservable | async;
-      <app-provider-ui-extensions
+      <app-provider-detail-view-extensions
         [currentProvider]="marketplaceEntry"
         [providers]="marketplaceEntries ?? [marketplaceEntry]"
       />

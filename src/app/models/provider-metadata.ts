@@ -113,7 +113,7 @@ export interface ProviderMetadata {
     contacts?: Contact[];
     documentation?: Documentation[];
     icon?: Icon;
-    uiExtensions?: UIExtension[];
+    detailViewExtensions?: DetailViewExtension[];
 
     links?: Link[];
     preferredSupportChannels?: Link[];
@@ -138,7 +138,7 @@ export interface Link {
   default?: boolean;
 }
 
-export interface UIExtension {
+export interface DetailViewExtension {
   url: string;
 }
 

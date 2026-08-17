@@ -7,14 +7,17 @@ import {
   input,
   signal,
 } from '@angular/core';
-import { MarketplaceEntry, UIExtension } from 'models/provider-metadata';
 import {
-  PROVIDER_UI_EXTENSION_NAVIGATE,
-  PROVIDER_UI_EXTENSION_PROTOCOL,
-  PROVIDER_UI_EXTENSION_RESIZE,
-  ProviderUIExtensionContext,
-  toUIExtensionProvider,
-} from 'models/provider-ui-extension';
+  PROVIDER_DETAIL_VIEW_EXTENSION_NAVIGATE,
+  PROVIDER_DETAIL_VIEW_EXTENSION_PROTOCOL,
+  PROVIDER_DETAIL_VIEW_EXTENSION_RESIZE,
+  ProviderDetailViewExtensionContext,
+  toDetailViewExtensionProvider,
+} from 'models/provider-detail-view-extension';
+import {
+  DetailViewExtension,
+  MarketplaceEntry,
+} from 'models/provider-metadata';
 import { ProviderService } from 'services/provider.service';
 
 interface LuigiCustomMessage {
@@ -26,19 +29,20 @@ interface LuigiCustomMessage {
 }
 
 @Component({
-  selector: 'app-provider-ui-extensions',
-  templateUrl: './provider-ui-extensions.component.html',
-  styleUrl: './provider-ui-extensions.component.scss',
+  selector: 'app-provider-detail-view-extensions',
+  templateUrl: './provider-detail-view-extensions.component.html',
+  styleUrl: './provider-detail-view-extensions.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class ProviderUIExtensionsComponent {
+export class ProviderDetailViewExtensionsComponent {
   readonly currentProvider = input.required<MarketplaceEntry>();
   readonly providers = input.required<readonly MarketplaceEntry[]>();
 
   protected readonly extensions = computed(() =>
     (
-      this.currentProvider().spec.providerMetadata.spec.uiExtensions ?? []
+      this.currentProvider().spec.providerMetadata.spec.detailViewExtensions ??
+      []
     ).filter(isSupportedExtension),
   );
   protected readonly context = computed(() =>
@@ -55,7 +59,7 @@ export class ProviderUIExtensionsComponent {
   protected handleCustomMessage(event: Event, index: number): void {
     const message = (event as CustomEvent<LuigiCustomMessage>).detail;
 
-    if (message?.id === PROVIDER_UI_EXTENSION_RESIZE) {
+    if (message?.id === PROVIDER_DETAIL_VIEW_EXTENSION_RESIZE) {
       const height = message.data?.height;
       if (typeof height === 'number' && Number.isFinite(height)) {
         this.heights.update((heights) => ({
@@ -66,7 +70,7 @@ export class ProviderUIExtensionsComponent {
       return;
     }
 
-    if (message?.id === PROVIDER_UI_EXTENSION_NAVIGATE) {
+    if (message?.id === PROVIDER_DETAIL_VIEW_EXTENSION_NAVIGATE) {
       const providerName = message.data?.providerName;
       if (typeof providerName !== 'string') {
         return;
@@ -80,16 +84,16 @@ export class ProviderUIExtensionsComponent {
     }
   }
 
-  private buildContext(): ProviderUIExtensionContext {
+  private buildContext(): ProviderDetailViewExtensionContext {
     return {
-      protocolVersion: PROVIDER_UI_EXTENSION_PROTOCOL,
-      currentProvider: toUIExtensionProvider(this.currentProvider()),
-      providers: this.providers().map(toUIExtensionProvider),
+      protocolVersion: PROVIDER_DETAIL_VIEW_EXTENSION_PROTOCOL,
+      currentProvider: toDetailViewExtensionProvider(this.currentProvider()),
+      providers: this.providers().map(toDetailViewExtensionProvider),
     };
   }
 }
 
-function isSupportedExtension(extension: UIExtension): boolean {
+function isSupportedExtension(extension: DetailViewExtension): boolean {
   try {
     return ['http:', 'https:'].includes(new URL(extension.url).protocol);
   } catch {

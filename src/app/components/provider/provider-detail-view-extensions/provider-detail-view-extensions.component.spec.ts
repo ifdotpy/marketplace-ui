@@ -1,10 +1,10 @@
-import { ProviderUIExtensionsComponent } from './provider-ui-extensions.component';
+import { ProviderDetailViewExtensionsComponent } from './provider-detail-view-extensions.component';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MarketplaceEntry } from 'models/provider-metadata';
 import {
-  PROVIDER_UI_EXTENSION_NAVIGATE,
-  PROVIDER_UI_EXTENSION_RESIZE,
-} from 'models/provider-ui-extension';
+  PROVIDER_DETAIL_VIEW_EXTENSION_NAVIGATE,
+  PROVIDER_DETAIL_VIEW_EXTENSION_RESIZE,
+} from 'models/provider-detail-view-extension';
+import { MarketplaceEntry } from 'models/provider-metadata';
 import { ProviderService } from 'services/provider.service';
 
 const provider = (name: string, url?: string): MarketplaceEntry => ({
@@ -14,21 +14,21 @@ const provider = (name: string, url?: string): MarketplaceEntry => ({
     providerMetadata: {
       spec: {
         displayName: name,
-        uiExtensions: url ? [{ url }] : [],
+        detailViewExtensions: url ? [{ url }] : [],
       },
     },
   },
 });
 
-describe('ProviderUIExtensionsComponent', () => {
-  let component: ProviderUIExtensionsComponent;
-  let fixture: ComponentFixture<ProviderUIExtensionsComponent>;
+describe('ProviderDetailViewExtensionsComponent', () => {
+  let component: ProviderDetailViewExtensionsComponent;
+  let fixture: ComponentFixture<ProviderDetailViewExtensionsComponent>;
   let navigateToProviderDetails: ReturnType<typeof vi.fn>;
 
   beforeEach(async () => {
     navigateToProviderDetails = vi.fn();
     await TestBed.configureTestingModule({
-      imports: [ProviderUIExtensionsComponent],
+      imports: [ProviderDetailViewExtensionsComponent],
       providers: [
         {
           provide: ProviderService,
@@ -37,13 +37,13 @@ describe('ProviderUIExtensionsComponent', () => {
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(ProviderUIExtensionsComponent);
+    fixture = TestBed.createComponent(ProviderDetailViewExtensionsComponent);
     component = fixture.componentInstance;
   });
 
   it('renders supported extensions in declaration order', async () => {
     const current = provider('current');
-    current.spec.providerMetadata.spec.uiExtensions = [
+    current.spec.providerMetadata.spec.detailViewExtensions = [
       { url: 'https://one.example/renderer' },
       { url: 'javascript:alert(1)' },
       { url: 'https://two.example/renderer' },
@@ -88,7 +88,7 @@ describe('ProviderUIExtensionsComponent', () => {
     component['handleCustomMessage'](
       new CustomEvent('custom-message', {
         detail: {
-          id: PROVIDER_UI_EXTENSION_RESIZE,
+          id: PROVIDER_DETAIL_VIEW_EXTENSION_RESIZE,
           data: { height: 5000 },
         },
       }),
@@ -112,7 +112,7 @@ describe('ProviderUIExtensionsComponent', () => {
     component['handleCustomMessage'](
       new CustomEvent('custom-message', {
         detail: {
-          id: PROVIDER_UI_EXTENSION_NAVIGATE,
+          id: PROVIDER_DETAIL_VIEW_EXTENSION_NAVIGATE,
           data: { providerName: 'candidate' },
         },
       }),
@@ -121,7 +121,7 @@ describe('ProviderUIExtensionsComponent', () => {
     component['handleCustomMessage'](
       new CustomEvent('custom-message', {
         detail: {
-          id: PROVIDER_UI_EXTENSION_NAVIGATE,
+          id: PROVIDER_DETAIL_VIEW_EXTENSION_NAVIGATE,
           data: { providerName: 'hidden' },
         },
       }),

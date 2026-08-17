@@ -8,7 +8,7 @@ describe('getMarketplaceEntriesQuery', () => {
     expect(query).toContain('data');
     expect(query).toContain('documentation {');
     expect(query).toContain('displayName');
-    expect(query).toContain('uiExtensions {');
+    expect(query).toContain('detailViewExtensions {');
     expect(query).toContain('url');
   });
 });

@@ -1,12 +1,12 @@
-# Provider detail UI extensions
+# Provider detail view extensions
 
 A provider can add read-only content to its Marketplace detail view with
-`ProviderMetadata.spec.uiExtensions`. Marketplace renders each URL in declaration order with
+`ProviderMetadata.spec.detailViewExtensions`. Marketplace renders each URL in declaration order with
 [Luigi Container](https://github.com/luigi-project/luigi/tree/main/container).
 
 ```yaml
 spec:
-  uiExtensions:
+  detailViewExtensions:
     - url: https://provider.example/ui/provider-details/
 ```
 

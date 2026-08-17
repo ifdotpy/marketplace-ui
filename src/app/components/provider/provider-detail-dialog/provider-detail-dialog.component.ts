@@ -31,7 +31,7 @@ import {
   DynamicPageTitleComponent,
 } from '@fundamental-ngx/platform/dynamic-page';
 import { Store } from '@ngrx/store';
-import { ProviderUIExtensionsComponent } from 'components/provider/provider-ui-extensions/provider-ui-extensions.component';
+import { ProviderDetailViewExtensionsComponent } from 'components/provider/provider-detail-view-extensions/provider-detail-view-extensions.component';
 import { VerificationInfoComponent } from 'components/provider/verification-info/verification-info.component';
 import { PROVIDER_INSTANCE_INSTALLED } from 'models/luigi-go-back';
 import {
@@ -79,7 +79,7 @@ import { triggerMatomoEvent } from 'utils/helpers';
     AsyncPipe,
     ContentDensityDirective,
     VerificationInfoComponent,
-    ProviderUIExtensionsComponent,
+    ProviderDetailViewExtensionsComponent,
   ],
   templateUrl: './provider-detail-dialog.component.html',
   styleUrl: './provider-detail-dialog.component.scss',

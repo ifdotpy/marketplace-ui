@@ -89,7 +89,7 @@ export const getMarketplaceEntriesQuery = gql`
                     url
                     displayName
                   }
-                  uiExtensions {
+                  detailViewExtensions {
                     url
                   }
                 }

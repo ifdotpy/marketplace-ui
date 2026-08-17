@@ -1,6 +1,6 @@
 @for (extension of extensions(); track $index) {
   <luigi-container
-    [attr.data-testid]="'provider-ui-extension-' + $index"
+    [attr.data-testid]="'provider-detail-view-extension-' + $index"
     [context]="context()"
     [label]="currentProvider().spec.providerMetadata.spec.displayName"
     [sandboxRules]="['allow-scripts', 'allow-same-origin', 'allow-popups']"
