@@ -69,9 +69,11 @@ describe('GraphqlService', () => {
   let mockApolloMutate: Mock;
   let mockWsApolloMutate: Mock;
   let mockSendCustomMessage: Mock;
+  let mockBindingQuery: Mock;
 
   beforeEach(() => {
     mockApolloQuery = vi.fn();
+    mockBindingQuery = vi.fn();
     mockApolloMutate = vi.fn();
     mockWsApolloMutate = vi.fn();
     mockSendCustomMessage = vi.fn();
@@ -86,6 +88,7 @@ describe('GraphqlService', () => {
           }),
           workspace: vi.fn().mockReturnValue({
             mutate: mockWsApolloMutate,
+            query: mockBindingQuery,
           }),
         }),
         MockProvider(LuigiClient, {
@@ -101,6 +104,7 @@ describe('GraphqlService', () => {
   });
 
   afterEach(() => {
+    vi.useRealTimers();
     mockStore.resetSelectors();
   });
 
@@ -182,30 +186,58 @@ describe('GraphqlService', () => {
   });
 
   describe('installProviderInstance', () => {
-    it('should mutate with correct variables and send custom message', () => {
-      const linkManagerMock = { goBack: vi.fn() };
-      const luigiClient = TestBed.inject(LuigiClient);
-      luigiClient.linkManager = vi.fn().mockReturnValue(linkManagerMock);
+    const created = {
+      data: {
+        apis_kcp_io: {
+          v1alpha2: { createAPIBinding: { metadata: { name: 'new-binding' } } },
+        },
+      },
+    };
+    const phase = (value: string) => ({
+      data: {
+        apis_kcp_io: { v1alpha2: { APIBinding: { status: { phase: value } } } },
+      },
+    });
 
-      mockWsApolloMutate.mockReturnValue(of({ data: {} }));
-
+    it('reloads the menu only after the created binding is Bound', async () => {
+      vi.useFakeTimers();
+      mockWsApolloMutate.mockReturnValue(of(created));
+      mockBindingQuery
+        .mockReturnValueOnce(of(phase('Binding')))
+        .mockReturnValue(of(phase('Bound')));
       let completed = false;
-      service
-        .installProviderInstance(mockMarketplaceEntry)
-        .subscribe(() => (completed = true));
+      service.installProviderInstance(mockMarketplaceEntry).subscribe(() => {
+        completed = true;
+      });
+      await vi.advanceTimersByTimeAsync(0);
+      expect(mockSendCustomMessage).not.toHaveBeenCalled();
+      expect(completed).toBe(false);
       mockStore.refreshState();
-
-      expect(mockWsApolloMutate).toHaveBeenCalledWith(
+      await vi.advanceTimersByTimeAsync(1000);
+      expect(mockWsApolloMutate).toHaveBeenCalledTimes(1);
+      expect(mockBindingQuery).toHaveBeenCalledWith(
         expect.objectContaining({
-          mutation: expect.anything(),
-          variables: expect.objectContaining({
-            generateName: 'test-provider-',
-            apiExportName: 'test-api-export',
-            apiExportPath: '/workspaces/test',
-          }),
+          variables: { name: 'new-binding' },
+          fetchPolicy: 'no-cache',
         }),
       );
-      expect(mockSendCustomMessage).toHaveBeenCalled();
+      expect(mockSendCustomMessage).toHaveBeenCalledTimes(1);
+      expect(completed).toBe(true);
+    });
+
+    it('does not report success if the binding never becomes Bound', async () => {
+      vi.useFakeTimers();
+      mockWsApolloMutate.mockReturnValue(of(created));
+      mockBindingQuery.mockReturnValue(of(phase('Binding')));
+      const next = vi.fn(),
+        error = vi.fn();
+      service
+        .installProviderInstance(mockMarketplaceEntry)
+        .subscribe({ next, error });
+      await vi.advanceTimersByTimeAsync(60000);
+      expect(next).not.toHaveBeenCalled();
+      expect(error).toHaveBeenCalledOnce();
+      expect(mockSendCustomMessage).not.toHaveBeenCalled();
     });
   });
 

@@ -101,3 +101,17 @@ export const getMarketplaceEntriesQuery = gql`
     }
   }
 `;
+
+export const getAPIBindingQuery = gql`
+  query ($name: String!) {
+    apis_kcp_io {
+      v1alpha2 {
+        APIBinding(name: $name) {
+          status {
+            phase
+          }
+        }
+      }
+    }
+  }
+`;
