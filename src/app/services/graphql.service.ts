@@ -2,14 +2,23 @@ import { Injectable, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { MarketplaceEntry, NodeContext } from 'models/index';
 import { ProviderMetadataFilter } from 'models/provider-metadata';
-import { Observable } from 'rxjs';
-import { filter, map, switchMap, tap } from 'rxjs/operators';
+import { Observable, timer } from 'rxjs';
+import {
+  exhaustMap,
+  filter,
+  map,
+  switchMap,
+  take,
+  tap,
+  timeout,
+} from 'rxjs/operators';
 import { ApolloFactory } from 'services/apollo-factory';
 import { LuigiClient } from 'services/luigi';
 import { luigiContextSelector } from 'services/luigi/state';
 import {
   createAPIBindingMutation,
   deleteAPIBindingMutation,
+  getAPIBindingQuery,
   getMarketplaceEntriesQuery,
 } from 'services/marketplace-graphql.queries';
 
@@ -80,10 +89,15 @@ export class GraphqlService {
 
     return this.store.select(luigiContextSelector).pipe(
       filter((x) => !!x),
+      take(1),
       switchMap((context) =>
         this.apolloFactory
           .workspace(context)
-          .mutate({
+          .mutate<{
+            apis_kcp_io: {
+              v1alpha2: { createAPIBinding: { metadata: { name: string } } };
+            };
+          }>({
             mutation: createAPIBindingMutation,
             variables: {
               generateName: generateName,
@@ -93,6 +107,31 @@ export class GraphqlService {
             },
           })
           .pipe(
+            switchMap((result) => {
+              const name =
+                result.data?.apis_kcp_io.v1alpha2.createAPIBinding.metadata
+                  .name;
+              if (!name)
+                throw new Error('The APIBinding creation response has no name');
+              // A successful create does not mean the new provider API is available.
+              return timer(0, 1000).pipe(
+                exhaustMap(() =>
+                  this.apolloFactory.workspace(context).query<{
+                    apis_kcp_io: {
+                      v1alpha2: { APIBinding: { status?: { phase?: string } } };
+                    };
+                  }>({ query: getAPIBindingQuery, variables: { name }, fetchPolicy: 'no-cache' }),
+                ),
+                filter(
+                  (response) =>
+                    response.data?.apis_kcp_io.v1alpha2.APIBinding.status
+                      ?.phase === 'Bound',
+                ),
+                take(1),
+                timeout({ first: 60000 }),
+                map(() => result),
+              );
+            }),
             tap(() => {
               this.sendReloadConfigCustomMessage(
                 'installProviderInstance',

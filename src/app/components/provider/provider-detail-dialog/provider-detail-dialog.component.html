@@ -42,7 +42,7 @@
                 fdType="emphasized"
                 label="Enable"
                 i18n-label
-                [disabled]="isChanging | async"
+                [disabled]="installing() || (isChanging | async)"
                 (click)="installExtension()"
               ></button>
             }
@@ -56,7 +56,7 @@
                 id="uninstall-btn"
                 label="Disable"
                 i18n-label
-                [disabled]="isChanging | async"
+                [disabled]="installing() || (isChanging | async)"
                 (click)="uninstallExtension()"
               ></button>
             }

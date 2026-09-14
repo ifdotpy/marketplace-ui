@@ -5,6 +5,8 @@ import {
   Component,
   OnDestroy,
   OnInit,
+  inject,
+  signal,
 } from '@angular/core';
 import {
   ButtonComponent,
@@ -43,6 +45,7 @@ import {
 import { Observable, Subscription, combineLatest } from 'rxjs';
 import { filter, mergeMap, tap } from 'rxjs/operators';
 import { LuigiClient, PmLuigiContextService } from 'services/luigi';
+import { NotificationService } from 'services/notification.service';
 import { ProviderService } from 'services/provider.service';
 import { isProviderInstanceChanging } from 'state/changing-provider-instance.selectors';
 import { loadProviderMetadata } from 'state/provider-metadata.action';
@@ -153,14 +156,31 @@ export class ProviderDetailDialogComponent implements OnInit, OnDestroy {
     return this.providerService.mapServiceLevel(serviceLevel);
   }
 
+  protected readonly installing = signal(false);
+  private readonly notifications = inject(NotificationService);
+
   protected installExtension(): void {
+    if (this.installing()) return;
+    this.installing.set(true);
     this.providerService
       .installProviderInstance(this.marketplaceEntry)
-      .subscribe(() => {
-        this.luigiClient.linkManager().goBack(PROVIDER_INSTANCE_INSTALLED);
-        if (this.marketplaceEntry) {
-          triggerMatomoEvent('InstallExtension', this.getMatomoEventObject());
-        }
+      .subscribe({
+        next: () => {
+          this.installing.set(false);
+          this.luigiClient.linkManager().goBack(PROVIDER_INSTANCE_INSTALLED);
+          if (this.marketplaceEntry) {
+            triggerMatomoEvent('InstallExtension', this.getMatomoEventObject());
+          }
+        },
+        error: () => {
+          // The binding can still exist after a timeout. Return to the catalog
+          // so its current state is loaded before another installation attempt.
+          this.installing.set(false);
+          this.notifications.openErrorStrip(
+            'The provider is not ready. Check its state in the Marketplace.',
+          );
+          this.luigiClient.linkManager().goBack(undefined);
+        },
       });
   }
 
